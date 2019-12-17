@@ -1,0 +1,9 @@
+{
+  "name": "Astral",
+  "version": "0.0.1",
+  "description": "Course Mangement System inspired by Harvard Extensions and MIT Stellar",
+  "main": "index.js",
+  "repository": "https://github.com/antony-jr/Astral",
+  "author": "antony-jr <antonyjr@protonmail.com>",
+  "license": "MIT"
+}
