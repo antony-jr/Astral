@@ -23,6 +23,7 @@ import Router from 'next/router';
 
 import PageLoader from '../components/PageLoader.js'
 
+import mysql from 'mysql'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -63,6 +64,22 @@ function HideOnScroll(props) {
 }
 
 function Home(props) {
+	var connection = mysql.createConnection({
+  host     : 'localhost',
+  port     : 3306,
+  user     : 'antonyjr',
+  password : 'excalibur',
+});
+
+
+connection.connect(function(err) {
+  if (err) {
+    console.error('error connecting: ' + err.stack);
+    return;
+  }
+
+  console.log('connected as id ' + connection.threadId);
+});
 	return (<Typography>Hello World!</Typography>);
 }
 
