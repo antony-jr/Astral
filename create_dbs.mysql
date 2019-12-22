@@ -1,0 +1,36 @@
+CREATE DATABASE IF NOT EXISTS Astral;
+USE Astral; -- Switch to our newly created database.
+
+-- We need a table to store all courses supported in this
+-- institution
+CREATE TABLE IF NOT EXISTS AvalCourses (
+        Course varchar(10) NOT NULL,
+	Regulation int NOT NULL,
+	PRIMARY KEY (Course , Regulation) /* Composite primary key. */
+);
+
+-- We need a table to store basic info on all the courses.
+CREATE TABLE IF NOT EXISTS Courses (
+	SubjectCode varchar(10) NOT NULL,
+        Regulation int,
+        Course varchar(10), /* department ? */
+        Title varchar(100),
+        CoursePage varchar(100),
+        PRIMARY KEY (SubjectCode)
+);
+
+-- We need a table to store the login credentials for all
+-- users.
+-- Like professors, administrator and head of department(tentative).
+CREATE TABLE IF NOT EXISTS Users (
+        UserID varchar(50) NOT NULL,
+        EmailID varchar(50),
+        PwdHash varchar(32) NOT NULL,
+        PRIMARY KEY (UserID)
+);
+
+-- Insert the default admin password
+INSERT INTO `Users` (`UserID` , `EmailID` , `PwdHash` ) 
+VALUES ('administrator', NULL, '45d1713d9bc87e2f8970091807433a45');
+
+SELECT 'Database setup completed successfully!' AS 'Astral'; -- Hackaround for print.
