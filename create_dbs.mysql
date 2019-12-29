@@ -3,20 +3,64 @@ USE Astral; -- Switch to our newly created database.
 
 -- We need a table to store all courses supported in this
 -- institution
-CREATE TABLE IF NOT EXISTS AvalCourses (
+CREATE TABLE IF NOT EXISTS Courses (
+        CourseID varchar(32) NOT NULL, /* MD5 Sum of Course, Subject Code, Regulation */
         Course varchar(10) NOT NULL,
+        SubjectCode varchar(10) NOT NULL,
 	Regulation int NOT NULL,
-	PRIMARY KEY (Course , Regulation) /* Composite primary key. */
+        Title varchar(100),
+        Description varchar(200),
+	PRIMARY KEY (CourseID) /* Composite primary key. */
 );
 
--- We need a table to store basic info on all the courses.
-CREATE TABLE IF NOT EXISTS Courses (
-	SubjectCode varchar(10) NOT NULL,
-        Regulation int,
-        Course varchar(10), /* department ? */
-        Title varchar(100),
-        CoursePage varchar(100),
-        PRIMARY KEY (SubjectCode)
+-- We need a table to store basic info on all the class sites.
+CREATE TABLE IF NOT EXISTS ClassSites (
+        ClassID varchar(32) NOT NULL, /* MD5 sum of CourseID,
+                                                    Year,
+                                                    Season and UserIncharge. */
+        CourseID varchar(32) NOT NULL, 
+        Year date NOT NULL,
+        Season varchar(10) NOT NULL,
+        ClassPage varchar(100),
+        UserIncharge varchar(50),
+        PRIMARY KEY (ClassID)
+);
+
+-- We need a table to store all announcements
+CREATE TABLE IF NOT EXISTS Announcements (
+        ClassID varchar(32) NOT NULL,
+        MsgID varchar(32) NOT NULL,  /* MD5 sum of timestamp and classid */
+	Msg varchar(200),
+        MsgTimeStamp timestamp NOT NULL,
+        PRIMARY KEY (MsgID)
+);
+
+CREATE TABLE IF NOT EXISTS Assignments (
+	ClassID varchar(32) NOT NULL,
+        AssignmentID varchar(32) NOT NULL, /* MD5 sum of timestamp and ClassID */
+        AssignmentTitle varchar(100) NOT NULL,
+        AssignmentDesc varchar(300) NOT NULL,
+        AssignmentTimeStamp timestamp NOT NULL,
+        AssignmentDeadline date NOT NULL,
+        PRIMARY KEY (AssignmentID)
+);
+ 
+CREATE TABLE IF NOT EXISTS Materials (
+	ClassID varchar(32) NOT NULL,
+        MaterialID varchar(32) NOT NULL, /* MD5 sum of ClassID,MaterialTitle,MaterialDesc
+                                                       ,MaterialHash. */
+        MaterialTitle varchar(100) NOT NULL,
+        MaterialDesc varchar(300),. 
+        MaterialUUID varchar(100) NOT NULL, /* Used to get the file location. */
+        PRIMARY KEY (ClassID)
+);
+
+CREATE TABLE IF NOT EXISTS Lectures (
+	ClassID varchar(32) NOT NULL,
+        LectureID varchar(32) NOT NULL,
+        LectureTitle varchar(100) NOT NULL,
+        LectureDesc varchar(300),
+	PRIMARY KEY (LectureID) 
 );
 
 -- We need a table to store the login credentials for all

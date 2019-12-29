@@ -129,7 +129,7 @@ export default function AstralAppBar(props) {
                   <SearchIcon />
                 </div>
                 <InputBase
-                  placeholder="Search…"
+                  placeholder="Search by Subject Code"
                   classes={{
                     root: classes.inputRoot,
                     input: classes.inputInput

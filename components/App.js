@@ -4,6 +4,7 @@ import Head from "next/head";
 import Router from "next/router";
 import PageLoader from "./PageLoader.js";
 import Grid from "@material-ui/core/Grid";
+import Container from "@material-ui/core/Container";
 
 class App extends React.Component {
   constructor(props) {
@@ -44,16 +45,10 @@ class App extends React.Component {
           justify="flex-start"
           style={{ flexGrow: 1 }}
         >
-          <AstralAppBar />
-          <Grid
-            container
-            spacing={0}
-            direction="column"
-            justify="center"
-            style={{ minHeight: "80vh" }}
-          >
-            {this.props.payload}
-          </Grid>
+        <AstralAppBar />
+	<Container maxWidth="lg" style={{marginTop: '80px',}}>	
+		{this.props.payload}
+	</Container>
         </Grid>
       </div>
     );
