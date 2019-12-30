@@ -45,10 +45,13 @@ class App extends React.Component {
           justify="flex-start"
           style={{ flexGrow: 1 }}
         >
-        <AstralAppBar userLogged={this.props.userLogged} username={this.props.username}/>
-	<Container maxWidth="lg" style={{marginTop: '80px',}}>	
-		{this.props.payload}
-	</Container>
+          <AstralAppBar
+            userLogged={this.props.userLogged}
+            username={this.props.username}
+          />
+          <Container maxWidth="lg" style={{ marginTop: "80px" }}>
+            {this.props.payload}
+          </Container>
         </Grid>
       </div>
     );
