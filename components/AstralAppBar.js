@@ -4,13 +4,31 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import InputBase from "@material-ui/core/InputBase";
+import OutlinedInput from "@material-ui/core/OutlinedInput"; 
 import { fade, makeStyles } from "@material-ui/core/styles";
 import MenuIcon from "@material-ui/icons/Menu";
+import FaceIcon from "@material-ui/icons/Face";
 import SearchIcon from "@material-ui/icons/Search";
 import useScrollTrigger from "@material-ui/core/useScrollTrigger";
 import Button from "@material-ui/core/Button";
 import Slide from "@material-ui/core/Slide";
 import Grid from "@material-ui/core/Grid";
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Chip from '@material-ui/core/Chip';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Router from 'next/router'
+import Box from '@material-ui/core/Box';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+
+import { withSession } from 'next-session';
+import fetch from 'isomorphic-unfetch';
 
 function HideOnScroll(props) {
   const { children, window } = props;
@@ -48,8 +66,8 @@ const useStyles = makeStyles(theme => ({
       display: "block"
     }
   },
-  menuButton: {
-    marginRight: theme.spacing(2)
+  avatar : {
+    marginLeft: theme.spacing(2)
   },
   appBar: {
     backgroundColor: "rgba(256,256,256,1)"
@@ -74,10 +92,7 @@ const useStyles = makeStyles(theme => ({
     width: "100%",
     position: "relative",
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.black, 0.15),
-    "&:hover": {
-      backgroundColor: fade(theme.palette.common.black, 0.25)
-    },
+    backgroundColor: theme.palette.common.white,
     [theme.breakpoints.up("sm")]: {
       width: "50%"
     }
@@ -102,22 +117,112 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function AstralAppBar(props) {
+  const [openLoginDialog, setOpenLoginDialog] = React.useState(false);
+  const [username, setUsername] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [anchorEl, setAnchorEl] = React.useState(false);
+  const [loginFailed, setLoginFailed] = React.useState(false);
+  const [profileMenuItemSelected, setProfileMenuItemSelected] = React.useState("dashboard");
   const classes = useStyles();
+  let options = 0;
+  let dialogContent = 0;
+  if(loginFailed){
+	  dialogContent = (<Typography>Login failed, Please try again.</Typography>);
+  }else{
+	  dialogContent = (<Typography>Use your registered username to login.</Typography>);
+  }
 
+  const handleUsernameChange = (e) => {
+	  setUsername(e.target.value);
+  }
+
+  const handlePasswordChange = (e) => {
+	  setPassword(e.target.value);
+  }
+
+  const handleLoginClickOpen = () => {
+      setLoginFailed(false); // Reset any errors	  
+      setUsername('')
+      setPassword('')
+      setOpenLoginDialog(true);
+  };
+
+  const handleLogin = async () => {
+	const data = new URLSearchParams();
+        data.append('username', username);
+	data.append('password', password);
+	const res = await fetch(`/api/authenticate`, {
+                    method: 'POST',
+		    body: data
+	});
+	const json = await res.json();
+	console.log(json)
+	if(json.error){
+		console.log(json);
+		return;
+	}else if(json.login == 'success'){
+		window.location.href = '/';
+	}else if(json.login == 'failed'){
+		setLoginFailed(true);
+	}
+  };
+
+  const handleLoginClose = () => {
+    setOpenLoginDialog(false);
+  };
+  const handleProfileMenuClose = () => {
+		  setAnchorEl(null);
+	  }
+	  const handleProfileMenuClick = (event) => {
+		  setAnchorEl(event.currentTarget);
+
+	  }
+	  const handleDashboard = () => { }
+
+	  const handleLogout = async () => {
+		  const res = await fetch(`/api/deauthenticate`,{method: 'get'});
+		  const json = await res.json();
+		  console.log(json);
+		  if(!json.error){
+			  window.location.href = '/';
+		  }
+	  }
+
+
+  if(props.userLogged){
+
+	  options = (<Box display="flex" alignItems="center" flexDirection="row">
+		  <Chip 
+                   variant="outlined"
+                   icon={<FaceIcon />}
+	           className={classes.avatar}
+		   label={props.username} />
+	   <IconButton
+        aria-label="more"
+        aria-controls="long-menu"
+        aria-haspopup="true"
+        onClick={handleProfileMenuClick}
+      >
+        <MoreVertIcon />
+</IconButton></Box>);
+	 }else {
+	  options = (
+  	   <Button
+              color="default"
+              variant="outlined"
+	      className={classes.loginButton}
+              onClick={handleLoginClickOpen}>
+              Login
+            </Button>
+  );
+	 }
   return (
     <div>
       <HideOnScroll {...props}>
         <AppBar position="fixed" className={classes.appBar}>
           <Toolbar>
-            <IconButton edge="start" aria-label="open drawer">
-              <MenuIcon />
-            </IconButton>
             <img src="logo.png" alt="logo" className={classes.logo} />
             <img src="logo_sm.png" alt="logo" className={classes.logoSm} />
-            {/*<Typography className={classes.title} variant="h5" noWrap>
-		  Astral
-		  </Typography>*/}
-
             <Grid
               container
               direction="row"
@@ -128,26 +233,84 @@ export default function AstralAppBar(props) {
                 <div className={classes.searchIcon}>
                   <SearchIcon />
                 </div>
-                <InputBase
-                  placeholder="Search by Subject Code"
+		<Autocomplete id="mainSearch"
+		 freeSolo
+		 options={[{title: "Test"}].map(option => option.title)}
+                 renderInput={params => (
+		<OutlinedInput
+		  {...params}	
+		  placeholder="Search by Subject Code "
                   classes={{
                     root: classes.inputRoot,
                     input: classes.inputInput
                   }}
-                  inputProps={{ "aria-label": "search" }}
-                />
+                  InputProps={{ ...params.InputProps, type: 'search' }}
+	         />) } />
               </div>
             </Grid>
-            <Button
-              color="default"
-              variant="outlined"
-              className={classes.loginButton}
-            >
-              Login
-            </Button>
-          </Toolbar>
+	    {options}
+         </Toolbar>
         </AppBar>
-      </HideOnScroll>
-    </div>
+       </HideOnScroll>
+    <Dialog open={openLoginDialog} onClose={handleLoginClose} aria-labelledby="form-dialog-title">
+	    <DialogTitle id="form-dialog-title">Login</DialogTitle>
+	<DialogContent>
+	<DialogContentText>
+		{dialogContent}
+	</DialogContentText>
+	<TextField
+	    error={loginFailed}
+            autoFocus
+            margin="dense"
+            id="username"
+            label="Username"
+            type="username"
+	    fullWidth
+	    value={username}
+            onChange={handleUsernameChange}
+           />
+	<TextField	  
+	    error={loginFailed}
+	    margin="dense"
+            id="password"
+            label="Password"
+            type="password"
+	    fullWidth
+	    value={password}
+	    onChange={handlePasswordChange}
+	    onKeyPress={(ev) => {
+		    if(ev.key == 'Enter'){
+			    handleLogin();
+			    ev.preventDefault();
+		    }
+	    }}
+        />
+       
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleLoginClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleLogin} color="primary">
+            Login
+          </Button>
+        </DialogActions>
+      </Dialog>
+       <Menu
+        id="long-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleProfileMenuClose}
+      >
+          <MenuItem key="dashboard" selected={profileMenuItemSelected == "dashboard"} onClick={handleDashboard}>
+	  Dashboard 
+	  </MenuItem>
+          <MenuItem key="logout" selected={profileMenuItemSelected == "logout"} onClick={handleLogout}>
+	  Logout 
+	  </MenuItem>
+  </Menu>
+
+	 </div>
   );
 }
