@@ -43,7 +43,6 @@ const handler = (req, res) => {
           "';",
         (error, results, fields) => {
           if (error) {
-            con.release();
             res.statusCode = 200;
             res.end(
               JSON.stringify({ error: true, reason: "sql query failed" })
