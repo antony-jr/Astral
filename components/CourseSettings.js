@@ -68,14 +68,17 @@ const DialogActions = withStyles(theme => ({
 
 export default function UserSettings(props){
 	const [openDialog, setOpenDialog] = React.useState(false);
-	const [usernameError, setUsernameError] = React.useState(false);
-	const [genError, setGenError] = React.useState(false);
-	const [errMsg, setErrMsg] = React.useState(null);
-	const [username, setUsername] = React.useState('');
-	const [legalName, setLegalName] = React.useState('');
-	const [email, setEmail] = React.useState('');
+	const [error, setError] = React.useState(false);
+	const [errMsg, setErrMsg] = React.useState('');
 	const [data, setData] = React.useState([]);
 	const { enqueueSnackbar } = useSnackbar();
+
+	const [course, setCourse] = React.useState('');
+	const [regulation, setRegulation] = React.useState(0);
+	const [subjectCode, setSubjectCode] = React.useState('');
+	const [title, setTitle] = React.useState('');
+	const [description, setDescription] = React.useState('');
+
 	// variant could be success, error, warning, info, or default
         // enqueueSnackbar('This is a success message!', { variant });
 
@@ -83,97 +86,95 @@ export default function UserSettings(props){
 		refresh();
 	}, []);
 
+	const handleCourseChange = e => {
+		setCourse(e.target.value);
+	};
 
-	const handleUsernameChange = e => {
-		setUsername(e.target.value);
-		if(e.target.value.toLowerCase() == 'administrator'){
-			setErrMsg("You cannot use a reserved username!");
-			setUsernameError(true);
-			return;
-		}else{
-			setUsernameError(false);
-		}
-		var didError = false;
-		for(var iter = 0; iter < data.length; ++iter){
-			if(data[iter].UserID == e.target.value){
-				setErrMsg("Username already exists!");
-				setUsernameError(true);
-				didError = true;
-				break;
-			}
-		}
-		if(!didError){
-			setUsernameError(false);
+	const handleRegulationChange = e => {
+		if(!isNaN(e.target.value)){
+			setRegulation(e.target.value);
 		}
 	}
 
-	const handleLegalNameChange = e => {
-		setLegalName(e.target.value);
+	const handleSubjectCodeChange = e => {
+		setSubjectCode(e.target.value);
 	}
 
-	const handleEmailChange = e => {
-		setEmail(e.target.value);
+	const handleTitleChange = e => {
+		setTitle(e.target.value);
 	}
 
-	const handleAddUser = () => {
-		setUsernameError(false);
-		setGenError(false);
-		setUsername('');
-		setLegalName('');
-		setEmail('');
+	const handleDescriptionChange = e => {
+		setDescription(e.target.value);
+	}
+
+	const handleAddCourse = () => {
+		setCourse('');
+		setRegulation(0);
+		setSubjectCode('');
+		setTitle('');
+		setDescription('');
 		setOpenDialog(true);
 	}
 
-	const removeUsers = (data) => {
+	const removeCourses = (data) => {
 		if(data.length == 0){
 			return;
 		}
 
-		enqueueSnackbar("Deleting selected users" , {variant: "info"});
 		for(var iter = 0; iter < data.length; ++iter){
-			const UN = data[iter].UserID;
+			const _course = data[iter].Course;
+			const _reg = data[iter].Regulation;
+			const _code = data[iter].SubjectCode;
+
 			const sendData = new URLSearchParams();
-			sendData.append("username", UN);
+			sendData.append("course", _course);
+			sendData.append("regulation", _reg);
+			sendData.append("subjectcode", _code);
+
 			axios
-			.post('/api/removeUser', sendData)
+			.post('/api/removeCourse', sendData)
 			.then(({data}) => {
 				if(data.error){
-					enqueueSnackbar("Cannot remove " + UN, {variant: "error"});
+					enqueueSnackbar("Cannot remove " + _code, {variant: "error"});
 				}else{
 					refresh();
 				}
 			});
 		
 		}
-		enqueueSnackbar("Selected users removed", {variant: "success"});
+		enqueueSnackbar("Selected courses removed", {variant: "success"});
 
 	}
 
-	const submitAddUser = () => {
-		if(username.length == 0 ||
-		   email.length == 0 ||
-	           legalName.length == 0){
-			setGenError(true);
+	const submitAddCourse = () => {
+		if(course.length == 0 ||
+	           regulation.length == 0 ||
+		   subjectCode.length == 0 ||
+		   title.length == 0
+		   ){
+			setError(true);
 			setErrMsg("All fields are required!");
 			return;
 		}else{
-			setGenError(false);
+			setError(false);
 		}
 
 		setOpenDialog(false);
-		enqueueSnackbar("User registration in progress", {variant: "info"});
 		const sendData = new URLSearchParams();
-		sendData.append("username", username);
-		sendData.append("legalName" , legalName);
-		sendData.append("email" , email);
+		sendData.append("course", course);
+		sendData.append("regulation" , regulation );
+		sendData.append("subjectcode" , subjectCode);
+		sendData.append("title", title);
+		sendData.append("description", description);
 		axios
-		.post('/api/addUser', sendData)
+		.post('/api/addCourse', sendData)
 		.then(({data}) => {
 			if(data.error){
-				enqueueSnackbar("User registration failed", {variant: "error"});
+				enqueueSnackbar("Cannot add course", {variant: "error"});
 			}else{
 				if(data.creation == "success"){
-					enqueueSnackbar("User registered", {variant: "success"});
+					enqueueSnackbar("Course added", {variant: "success"});
 					refresh();
 				}
 			}
@@ -186,9 +187,9 @@ export default function UserSettings(props){
 		.get('/api/getCourses')
 		.then(({data}) => {
 			if(data.error){
-				enqueueSnackbar("Could not retrive user information",  {variant: "error"});
+				enqueueSnackbar("Could not retrive course information",  {variant: "error"});
 			}else{
-				setData(data.users);
+				setData(data.courses);
 			}
 		});
 	}
@@ -207,7 +208,7 @@ export default function UserSettings(props){
 	return (
 		<React.Fragment>
 	<MaterialTable
-		title="Manage Users"
+		title="Manage Courses"
 		components={{
 			Container: props => <Paper {...props} elevation={0}/>
 		}}
@@ -224,6 +225,11 @@ export default function UserSettings(props){
             onClick: (evt, data) => { removeCourses(data) } 
 	  },
 	  {
+            icon: TableIcons.Export,
+            tooltip: 'Create Class',
+            onClick: (event, rowData) =>{alert("You saved " + rowData.name)}
+          },
+	  {
 	    icon: TableIcons.Add,
 	    tooltip: 'Add Course',
 	    isFreeAction: true,
@@ -236,61 +242,95 @@ export default function UserSettings(props){
           Add Course
         </DialogTitle>
 	<DialogContent dividers>
-	{(usernameError || genError) && <Typography color="error">{errMsg}</Typography>}
+	{error && <Typography color="error">{errMsg}</Typography>}
 	<TextField
-            error={usernameError || genError}
+            error={error}
             margin="dense"
-            id="username"
-            label="Username"
-            type="username"
+            id="course"
+            label="Course"
+            type="text"
             fullWidth
-            value={username}
-            onChange={handleUsernameChange}
+            value={course}
+            onChange={handleCourseChange}
             onKeyPress={ev => {
               if (ev.key == "Enter") {
-                submitAddUser();
+                submitAddCourse();
                 ev.preventDefault();
               }
             }}
           />
  	<TextField
-            error={genError}
+            error={error}
             margin="dense"
-            id="legalName"
-            label="Legal Name"
+            id="subjectCode"
+            label="Subject Code"
             type="text"
             fullWidth
-            value={legalName}
-            onChange={handleLegalNameChange}
+            value={subjectCode}
+            onChange={handleSubjectCodeChange}
             onKeyPress={ev => {
               if (ev.key == "Enter") {
-                submitAddUser();
+                submitAddCourse();
                 ev.preventDefault();
               }
             }}
           />
  
 	<TextField
-            error={genError}
+            error={error}
             margin="dense"
-            id="email"
-            label="Email"
-            type="email"
+            id="regulation"
+            label="Regulation"
+            type="text"
             fullWidth
-            value={email}
-            onChange={handleEmailChange}
+            value={regulation}
+            onChange={handleRegulationChange}
             onKeyPress={ev => {
               if (ev.key == "Enter") {
-                submitAddUser();
+                submitAddCourse();
+                ev.preventDefault();
+              }
+            }}
+          />
+ 	<TextField
+            error={error}
+            margin="dense"
+            id="title"
+            label="Title"
+            type="text"
+            fullWidth
+            value={title}
+            onChange={handleTitleChange}
+            onKeyPress={ev => {
+              if (ev.key == "Enter") {
+                submitAddCourse();
                 ev.preventDefault();
               }
             }}
           />
  
 
+	<TextField
+            error={error}
+            margin="dense"
+            id="desc"
+            label="Description"
+            type="text"
+            fullWidth
+            value={description}
+            onChange={handleDescriptionChange}
+            onKeyPress={ev => {
+              if (ev.key == "Enter") {
+                submitAddCourse();
+                ev.preventDefault();
+              }
+            }}
+          />
+
+
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={submitAddUser} color="primary">
+          <Button autoFocus onClick={submitAddCourse} color="primary">
             ADD 
           </Button>
         </DialogActions>
