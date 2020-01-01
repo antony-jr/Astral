@@ -75,8 +75,14 @@ CREATE TABLE IF NOT EXISTS Users (
         PRIMARY KEY (UserID)
 );
 
+CREATE TABLE IF NOT EXISTS SiteConfig (
+	ValueKey varchar(30) NOT NULL,
+	Value varchar(200),
+        PRIMARY KEY (ValueKey)
+);
+
 -- Insert the default admin password
 INSERT INTO `Users` (`UserID` , `EmailID` , `PwdHash` ) 
-VALUES ('administrator', NULL, '45d1713d9bc87e2f8970091807433a45');
+VALUES ('administrator', NULL, '200ceb26807d6bf99fd6f4f0d1ca54d4');
 
 SELECT 'Database setup completed successfully!' AS 'Astral'; -- Hackaround for print.

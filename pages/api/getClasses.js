@@ -11,7 +11,17 @@ const handler = (req, res) => {
     );
     return;
   }
-  if (req.session.userLogged) {
+ if (req.session.userLogged) {
+    if(req.session.username == 'administrator'){
+	    res.statusCode = 200;
+            res.end(
+              JSON.stringify({
+                error: true,
+                reason: "no class for the administrator"
+              })
+            );
+	    return;
+    }
     getConnection((err, con) => {
       if (err) {
         res.statusCode = 200;
@@ -37,8 +47,8 @@ const handler = (req, res) => {
             res.statusCode = 200;
             res.end(
               JSON.stringify({
-                error: true,
-                reason: "no class for the administrator"
+                error: false,
+                classes: []
               })
             );
             return;

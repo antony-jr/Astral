@@ -1,22 +1,18 @@
-// Get all data to be displayed on the index like
-// in MIT Stellar site.
-// Enforces to use a specific format.
 var getConnection = require("../../lib/getConnection.js");
 
-export default (req, res) => {
+const handler = (req, res) => {
   res.setHeader("Content-Type", "application/json");
   getConnection((err, con) => {
     if (err) {
       res.statusCode = 200;
-      res.end(JSON.stringify({ error: true }));
+      res.end(JSON.stringify({ error: true, reason: "cannot connect to database" }));
       return;
     }
 
     con.query("SELECT * FROM Courses", (error, results, fields) => {
       if (error) {
-        con.release();
         res.statusCode = 200;
-        res.end(JSON.stringify({ error: true }));
+        res.end(JSON.stringify({ error: true, reason: "sql query failed" }));
         return;
       }
 
@@ -26,3 +22,5 @@ export default (req, res) => {
     });
   });
 };
+
+export default handler;

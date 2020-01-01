@@ -1,4 +1,9 @@
 {
+	"account-notice" : { 
+		"email-from-address" : "astral@antony-jr.github.io",
+		"email-subject" : "Welcome to Astral",
+		"email-body" : "\r\n<h1>Astral Account Notice<\/h1><hr><p>You have been registered in the Astral Site as a user, if you think this is a spam then please report to the domain owned by this email id. Astral is a course management system, usually users are authenticated through emails only by the administrator of the site. Even the administrator does not know this password, This is to avoid the administrator to take control of everything and for other privacy concerns. You can login to the site at <a href=\"https:\/\/antony-jr.github.io\/Astral\">antony-jr.github.io\/Astral<\/a>. <\/p><br><div style=\"box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); width: 100%; height: 50px\"><div style=\"text-align: center; width: 100%; height: 100%;\"><strong style=\"font-size: 20px;\">Username: <\/strong><TEMPLATE>username<\/TEMPLATE><br><strong style=\"font-size: 20px;\">Password: <\/strong><TEMPLATE>password<\/TEMPLATE><br><\/div><\/div><hr>"
+	},
 	"db-config" : {
 		"host"     : "localhost",
 		"port"     : 3306,

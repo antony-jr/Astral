@@ -25,10 +25,27 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function PublicPage() {
+  const [classSiteYear, setClassSiteYear] = React.useState('');
+  React.useEffect(() => {
+		axios
+		.get('/api/getAcademicYear')
+		.then(({data}) => {
+			if(data.error){
+				setClassSiteYear('Unknown');
+				console.log(data);
+			}else{
+				setClassSiteYear(data.fromAcademicYear.toString() + 
+					         " - " + 
+					         data.toAcademicYear.toString());
+			}
+		});
+
+  }, []);
+
   let render = (
     <div>
       <Typography variant="h4">
-        Class Sites / <b>2020 - 2021</b>
+	 Class Sites / <b>{classSiteYear}</b>
       </Typography>
       <Divider />
       <br />
@@ -55,7 +72,7 @@ function UserPage(props) {
           </div>
         );
         return;
-      } else if (data.length == 0) {
+      } else if (data.classes.length == 0) {
         setContent(
           <div className={classes.userPageRoot}>
             You have no classes assigned, Please contact your administrator if
