@@ -295,7 +295,7 @@ export default function AstralAppBar(props) {
                 <div className={classes.searchIcon}>
                   <SearchIcon />
                 </div>
-                <Autocomplete
+		<Autocomplete
                   id="mainSearch"
                   freeSolo
                   options={[{ title: "Test" }].map(option => option.title)}
@@ -310,7 +310,7 @@ export default function AstralAppBar(props) {
                       InputProps={{ ...params.InputProps, type: "search" }}
                     />
                   )}
-                />
+		  />
               </div>
             </Grid>
             {options}

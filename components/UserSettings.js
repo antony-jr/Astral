@@ -226,7 +226,7 @@ export default function UserSettings(props){
 	    icon: TableIcons.Add,
 	    tooltip: 'Add User',
 	    isFreeAction: true,
-	    onClick: (event) => {setOpenDialog(true)},
+	    onClick: handleAddUser,
 	  },
 	  ]}
 			icons={TableIcons}/>

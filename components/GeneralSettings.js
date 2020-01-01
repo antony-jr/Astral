@@ -117,4 +117,3 @@ export default function GeneralSettings(props){
         </ExpansionPanelActions>	
 	</React.Fragment>);
 }
-

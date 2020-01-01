@@ -1,9 +1,7 @@
 import { withSession } from "next-session";
-import siteConfig from '../../siteConfig.json';
 
 var getConnection = require("../../lib/getConnection.js");
 var crypto = require("crypto");
-
 
 const handler = (req, res) => {
   res.setHeader("Content-Type", "application/json");
@@ -21,16 +19,10 @@ const handler = (req, res) => {
     return;
   }
 
-  const {course, regulation, subjectcode, title, description} = req.body;
-
-  
+  const {ClassID} = req.body;
 
   if (
-	  typeof course == "string" &&
-	  typeof regulation == "string" &&
-	  typeof subjectcode == "string" &&
-	  typeof title == "string" &&
-	  typeof description == "string"
+	  typeof ClassID == "string"
   ) {
    getConnection((err, con) => {
       if (err) {
@@ -41,14 +33,10 @@ const handler = (req, res) => {
         return;
       }
 
-     const CourseID = crypto
-        .createHash("md5")
-        .update(course + subjectcode + regulation)
-        .digest("hex");
-    
+	    
       con.query(
-        "SELECT * FROM Courses WHERE CourseID='" +
-          CourseID + "';",
+        "SELECT * FROM ClassSites WHERE ClassID='" +
+          ClassID + "';",
         (error, results, fields) => {
           if (error) {
             res.statusCode = 200;
@@ -58,31 +46,24 @@ const handler = (req, res) => {
             return;
           }
 
-	  if (results.length == 0) {
-            // Implies there is no course collision.
+          res.statusCode = 200;
+	  if (results.length == 1) {
 	    con.query(
-		    "INSERT INTO `Courses` VALUES ('" + 
-		    CourseID + "', '" + 
-		    course + "', '" + 
-		    subjectcode + "', " + 
-		    regulation + ", '" + 
-		    title + "', '" + 
-		    description + "', NULL);",
+		    "DELETE FROM ClassSites WHERE ClassID='" + ClassID + "';",
 		    (e, r, f) => {
 	    if (e) {
             res.statusCode = 200;
             res.end(
               JSON.stringify({ error: true, reason: "sql query failed" }));
 	    return;
-	    } 
-
+	    }   
 		res.statusCode = 200;
-		res.end(JSON.stringify({error: false, creation: "success"}));
+		res.end(JSON.stringify({error: false, remove: "success"}));
 		return;
 	    
 	    });
 	  } else {
-            res.end(JSON.stringify({ error: false, creation: "failed", reason: "course already exists" }));
+            res.end(JSON.stringify({ error: false, remove: "failed", reason: "class does not exists" }));
           }
           return;
         }

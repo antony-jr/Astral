@@ -18,6 +18,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import GeneralSettings from '../components/GeneralSettings.js'; 
 import UserSettings from '../components/UserSettings.js';
 import CourseSettings from '../components/CourseSettings.js';
+import ClassSitesSettings from '../components/ClassSitesSettings.js';
 
 
 const useStyles = makeStyles(theme => ({
@@ -56,6 +57,9 @@ export default function() {
 		case 'courseSettings':
 			content = (<CourseSettings />);
 			break;
+		case 'classSitesSettings':
+			content = (<ClassSitesSettings />);
+			break;
 		default:
 			content = (null);
 			break;
@@ -89,12 +93,12 @@ export default function() {
 		    onChange={handleChange('userSettings')}
 		    payload={currentContent}/>
 		<ControlPanel 
-		    heading="Course Settings / Add Class Sites"
+		    heading="Course Settings"
 		    expanded={expanded == 'courseSettings'}
 		    onChange={handleChange('courseSettings')}
 		    payload={currentContent}/>
 		<ControlPanel 
-		    heading="View and Remove Class Sites"
+		    heading="Class Sites Settings"
 		    expanded={expanded == 'classSitesSettings'}
 		    onChange={handleChange('classSitesSettings')}
 		    payload={currentContent} />

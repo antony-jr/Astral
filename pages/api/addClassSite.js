@@ -21,16 +21,15 @@ const handler = (req, res) => {
     return;
   }
 
-  const {course, regulation, subjectcode, title, description} = req.body;
+  const {CourseID, Year, Season, UserIncharge} = req.body;
 
   
 
   if (
-	  typeof course == "string" &&
-	  typeof regulation == "string" &&
-	  typeof subjectcode == "string" &&
-	  typeof title == "string" &&
-	  typeof description == "string"
+	  typeof CourseID == "string" &&
+	  typeof Year == "string" &&
+	  typeof Season == "string" &&
+	  typeof UserIncharge == "string"
   ) {
    getConnection((err, con) => {
       if (err) {
@@ -41,14 +40,16 @@ const handler = (req, res) => {
         return;
       }
 
-     const CourseID = crypto
+     const ClassID = crypto
         .createHash("md5")
-        .update(course + subjectcode + regulation)
+        .update(CourseID + Year + Season + UserIncharge)
         .digest("hex");
-    
+
+     const ClassPage = "/class/" + ClassID;
+
       con.query(
-        "SELECT * FROM Courses WHERE CourseID='" +
-          CourseID + "';",
+        "SELECT * FROM ClassSites WHERE ClassID='" +
+          ClassID + "';",
         (error, results, fields) => {
           if (error) {
             res.statusCode = 200;
@@ -61,13 +62,13 @@ const handler = (req, res) => {
 	  if (results.length == 0) {
             // Implies there is no course collision.
 	    con.query(
-		    "INSERT INTO `Courses` VALUES ('" + 
+		    "INSERT INTO `ClassSites` VALUES ('" + 
+		    ClassID + "', '" + 
 		    CourseID + "', '" + 
-		    course + "', '" + 
-		    subjectcode + "', " + 
-		    regulation + ", '" + 
-		    title + "', '" + 
-		    description + "', NULL);",
+		    Year + "', '" + 
+		    Season + "', '" + 
+		    ClassPage + "', '" + 
+		    UserIncharge + "');",
 		    (e, r, f) => {
 	    if (e) {
             res.statusCode = 200;
@@ -82,7 +83,7 @@ const handler = (req, res) => {
 	    
 	    });
 	  } else {
-            res.end(JSON.stringify({ error: false, creation: "failed", reason: "course already exists" }));
+            res.end(JSON.stringify({ error: false, creation: "failed", reason: "class already exists" }));
           }
           return;
         }

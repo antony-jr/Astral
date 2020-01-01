@@ -24,6 +24,9 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import CloseIcon from '@material-ui/icons/Close';
 import TableIcons from './TableIcons.js'
 
+import CourseAutocomplete from './CourseAutocomplete.js';
+import UserAutocomplete from './UserAutocomplete.js';
+
 const styles = theme => ({
   root: {
     margin: 0,
@@ -73,11 +76,10 @@ export default function UserSettings(props){
 	const [data, setData] = React.useState([]);
 	const { enqueueSnackbar } = useSnackbar();
 
-	const [course, setCourse] = React.useState('');
-	const [regulation, setRegulation] = React.useState(0);
-	const [subjectCode, setSubjectCode] = React.useState('');
-	const [title, setTitle] = React.useState('');
-	const [description, setDescription] = React.useState('');
+	const [courseID, setCourseID] = React.useState('');
+	const [year, setYear] = React.useState(0);
+	const [season, setSeason] = React.useState('');
+	const [userIncharge, setUserIncharge] = React.useState('');
 
 	// variant could be success, error, warning, info, or default
         // enqueueSnackbar('This is a success message!', { variant });
@@ -86,55 +88,45 @@ export default function UserSettings(props){
 		refresh();
 	}, []);
 
-	const handleCourseChange = e => {
-		setCourse(e.target.value);
+	const handleCourseIDChange = (e, value) => {
+		setCourseID(value.CourseID);
 	};
 
-	const handleRegulationChange = e => {
+	const handleYearChange = e => {
 		if(!isNaN(e.target.value)){
-			setRegulation(e.target.value);
+			setYear(e.target.value);
 		}
 	}
 
-	const handleSubjectCodeChange = e => {
-		setSubjectCode(e.target.value);
+	const handleSeasonChange = e => {
+		setSeason(e.target.value);
 	}
 
-	const handleTitleChange = e => {
-		setTitle(e.target.value);
+	const handleUserInchargeChange = (e,value) => {
+		setUserIncharge(value.UserID);
 	}
 
-	const handleDescriptionChange = e => {
-		setDescription(e.target.value);
-	}
-
-	const handleAddCourse = () => {
-		setError(false);
-		setCourse('');
-		setRegulation(0);
-		setSubjectCode('');
-		setTitle('');
-		setDescription('');
+	const handleAddClassSite = () => {
+		setCourseID('');
+		setYear('');
+		setSeason('');
+		setUserIncharge('');
 		setOpenDialog(true);
 	}
 
-	const removeCourses = (data) => {
+	const removeClassSites = (data) => {
 		if(data.length == 0){
 			return;
 		}
 
 		for(var iter = 0; iter < data.length; ++iter){
-			const _course = data[iter].Course;
-			const _reg = data[iter].Regulation;
-			const _code = data[iter].SubjectCode;
+			const _ClassID = data[iter].ClassID;
 
 			const sendData = new URLSearchParams();
-			sendData.append("course", _course);
-			sendData.append("regulation", _reg);
-			sendData.append("subjectcode", _code);
+			sendData.append("ClassID", _ClassID);
 
 			axios
-			.post('/api/removeCourse', sendData)
+			.post('/api/removeClassSite', sendData)
 			.then(({data}) => {
 				if(data.error){
 					enqueueSnackbar("Cannot remove " + _code, {variant: "error"});
@@ -144,15 +136,15 @@ export default function UserSettings(props){
 			});
 		
 		}
-		enqueueSnackbar("Selected courses removed", {variant: "success"});
+		enqueueSnackbar("Selected class sites are removed", {variant: "success"});
 
 	}
 
-	const submitAddCourse = () => {
-		if(course.length == 0 ||
-	           regulation.length == 0 ||
-		   subjectCode.length == 0 ||
-		   title.length == 0
+	const submitAddClassSite = () => {
+		if(courseID.length == 0 ||
+	           year.length == 0 ||
+		   season.length == 0 ||
+		   userIncharge.length == 0
 		   ){
 			setError(true);
 			setErrMsg("All fields are required!");
@@ -162,20 +154,21 @@ export default function UserSettings(props){
 		}
 
 		setOpenDialog(false);
+		enqueueSnackbar("Class addition in progress", {variant: "info"});
 		const sendData = new URLSearchParams();
-		sendData.append("course", course);
-		sendData.append("regulation" , regulation );
-		sendData.append("subjectcode" , subjectCode);
-		sendData.append("title", title);
-		sendData.append("description", description);
+		sendData.append("CourseID", courseID);
+		sendData.append("Year" , year);
+		sendData.append("Season" , season);
+		sendData.append("UserIncharge", userIncharge);
 		axios
-		.post('/api/addCourse', sendData)
+		.post('/api/addClassSite', sendData)
 		.then(({data}) => {
 			if(data.error){
-				enqueueSnackbar("Cannot add course", {variant: "error"});
+				console.log(data.reason);
+				enqueueSnackbar("Cannot add class site", {variant: "error"});
 			}else{
 				if(data.creation == "success"){
-					enqueueSnackbar("Course added", {variant: "success"});
+					enqueueSnackbar("Class site added", {variant: "success"});
 					refresh();
 				}
 			}
@@ -185,12 +178,12 @@ export default function UserSettings(props){
 	const refresh = () => {
 		// Refresh all rows in the table.
 		axios
-		.get('/api/getCourses')
+		.get('/api/getClassSites')
 		.then(({data}) => {
 			if(data.error){
 				enqueueSnackbar("Could not retrive course information",  {variant: "error"});
 			}else{
-				setData(data.courses);
+				setData(data.classes);
 			}
 		});
 	}
@@ -200,16 +193,18 @@ export default function UserSettings(props){
 	}
 
 	const columns = [
-        { title: 'Course', field: 'Course' },
+        { title: 'Subject Code', field: 'SubjectCode' },
         { title: 'Regulation', field: 'Regulation'},
 	{ title: 'Title', field: 'Title' },
-	{ title: 'Subject Code', field: 'SubjectCode'},
+	{ title: 'Year', field: 'Year'},
+	{ title: 'Season', field: 'Season'},
+	{ title: 'Incharge', field: 'UserIncharge' },
        ]
 
 	return (
 		<React.Fragment>
 	<MaterialTable
-		title="Manage Courses"
+		title="Class Sites"
 		components={{
 			Container: props => <Paper {...props} elevation={0}/>
 		}}
@@ -221,112 +216,67 @@ export default function UserSettings(props){
 		}}
 		actions={[
           {
-            tooltip: 'Remove All Selected Courses',
+            tooltip: 'Remove All Selected Class Sites',
             icon: TableIcons.Delete,
-            onClick: (evt, data) => { removeCourses(data) } 
+            onClick: (evt, data) => { removeClassSites(data) } 
 	  },
 	  {
 	    icon: TableIcons.Add,
-	    tooltip: 'Add Course',
+	    tooltip: 'Add Class Site',
 	    isFreeAction: true,
-	    onClick: handleAddCourse,
+	    onClick: handleAddClassSite,
 	  },
 	  ]}
 			icons={TableIcons}/>
 	<Dialog open={openDialog} onClose={handleClose}>
         <DialogTitle onClose={handleClose}>
-          Add Course
+          Add Class Site
         </DialogTitle>
 	<DialogContent dividers>
 	{error && <Typography color="error">{errMsg}</Typography>}
+	<div style={{marginTop: '10px',}}>
+		<CourseAutocomplete error={error} onChange={handleCourseIDChange} />
+	</div>
+	<div style={{marginTop: '10px',}}>
+	<UserAutocomplete  error={error} onChange={handleUserInchargeChange} />
+	</div>
 	<TextField
             error={error}
             margin="dense"
-            id="course"
-            label="Course"
+            id="year"
+            label="Year"
             type="text"
             fullWidth
-            value={course}
-            onChange={handleCourseChange}
+            value={year}
+            onChange={handleYearChange}
             onKeyPress={ev => {
               if (ev.key == "Enter") {
-                submitAddCourse();
-                ev.preventDefault();
-              }
-            }}
-          />
- 	<TextField
-            error={error}
-            margin="dense"
-            id="subjectCode"
-            label="Subject Code"
-            type="text"
-            fullWidth
-            value={subjectCode}
-            onChange={handleSubjectCodeChange}
-            onKeyPress={ev => {
-              if (ev.key == "Enter") {
-                submitAddCourse();
+                submitAddClassSite();
                 ev.preventDefault();
               }
             }}
           />
  
-	<TextField
-            error={error}
-            margin="dense"
-            id="regulation"
-            label="Regulation"
-            type="text"
-            fullWidth
-            value={regulation}
-            onChange={handleRegulationChange}
-            onKeyPress={ev => {
-              if (ev.key == "Enter") {
-                submitAddCourse();
-                ev.preventDefault();
-              }
-            }}
-          />
  	<TextField
             error={error}
             margin="dense"
-            id="title"
-            label="Title"
+            id="season"
+            label="Season"
             type="text"
             fullWidth
-            value={title}
-            onChange={handleTitleChange}
+            value={season}
+            onChange={handleSeasonChange}
             onKeyPress={ev => {
               if (ev.key == "Enter") {
-                submitAddCourse();
+                submitAddClassSite();
                 ev.preventDefault();
               }
             }}
           />
- 
-
-	<TextField
-            error={error}
-            margin="dense"
-            id="desc"
-            label="Description"
-            type="text"
-            fullWidth
-            value={description}
-            onChange={handleDescriptionChange}
-            onKeyPress={ev => {
-              if (ev.key == "Enter") {
-                submitAddCourse();
-                ev.preventDefault();
-              }
-            }}
-          />
-
 
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={submitAddCourse} color="primary">
+          <Button autoFocus onClick={submitAddClassSite} color="primary">
             ADD 
           </Button>
         </DialogActions>
