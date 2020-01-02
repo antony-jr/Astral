@@ -20,7 +20,8 @@ const handler = (req, res) => {
 
     getConnection((err, con) => {
       if (err) {
-        res.statusCode = 200;
+       con.release();
+	      res.statusCode = 200;
         res.end(
           JSON.stringify({ error: true, reason: "cannot connect to database" })
         );
@@ -29,13 +30,15 @@ const handler = (req, res) => {
       con.query(
         "SELECT LegalName,UserID,EmailID FROM Users WHERE UserID != 'administrator';",
         (error, results, fields) => {
-          if (error) {
+		if (error) {
+			con.release();
             res.statusCode = 200;
             res.end(
               JSON.stringify({ error: true, reason: "sql query failed" })
             );
             return;
-	  }
+		}
+		con.release();
 	  res.statusCode = 200;
 	  res.end(JSON.stringify({error: false, users: results}));
 	  return;

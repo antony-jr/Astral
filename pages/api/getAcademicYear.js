@@ -15,7 +15,8 @@ const handler = (req, res) => {
 
     getConnection((err, con) => {
       if (err) {
-        res.statusCode = 200;
+       con.release();
+	      res.statusCode = 200;
         res.end(
           JSON.stringify({ error: true, reason: "cannot connect to database" })
         );
@@ -24,7 +25,8 @@ const handler = (req, res) => {
       con.query(
         "SELECT * FROM SiteConfig WHERE ValueKey='basicInfo';",
         (error, results, fields) => {
-          if (error) {
+		if (error) {
+			con.release();
             res.statusCode = 200;
             res.end(
               JSON.stringify({ error: true, reason: "sql query failed" })
@@ -34,14 +36,17 @@ const handler = (req, res) => {
 
           res.statusCode = 200;
 	  if (results.length == 1) {
-	    try{
+		  try{
+			  con.release();
 		    const json = JSON.parse(results[0]["Value"]);
 		    res.end(JSON.stringify({ error: false, ...json}));
-	    }catch(e){
+		  }catch(e){
+			  con.release();
 		    res.end(JSON.stirngify({ error: true,
 			                     reason: "parsing json failed"}));
 	    }
-          } else {
+	  } else {
+		  con.release();
             res.end(JSON.stringify({ error: false, reason: "unknown" }));
           }
           return;

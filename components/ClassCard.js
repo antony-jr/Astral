@@ -52,7 +52,7 @@ export default function CourseCard(props) {
           {props.subjectCode}
         </Typography>
         <Typography className={classes.pos} color="textSecondary">
-          {props.season}
+          {props.year + " - " + props.season}
         </Typography>
         <div style={{ minHeight: 70, maxHeight: 70, marginBottom: "20px" }}>
           <Typography paragraph variant="body2" component="p">

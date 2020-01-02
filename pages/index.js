@@ -9,7 +9,8 @@ import {
   Divider,
   Paper,
   Chip,
-  Grid
+  Grid,
+  Box
 } from "@material-ui/core";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -26,6 +27,10 @@ const useStyles = makeStyles(theme => ({
 
 function PublicPage() {
   const [classSiteYear, setClassSiteYear] = React.useState('');
+  const [classSites, setClassSites] = React.useState([]);
+  const [resultLoading, setResultLoading] = React.useState(false);
+  const [results, setResults] = React.useState([]);
+
   React.useEffect(() => {
 		axios
 		.get('/api/getAcademicYear')
@@ -39,8 +44,24 @@ function PublicPage() {
 					         data.toAcademicYear.toString());
 			}
 		});
+	  	
+	  	axios
+	  	.get('/api/getClassSitesForFrontPage')
+	        .then(({data}) => {
+			if(!data.error){
+				setClassSites(data.sites);
+			}
+		});
 
   }, []);
+
+  const handleClick = cl => {
+	  alert(cl);
+  };
+
+  const date = new Date();
+  const currentYear = date.getFullYear();
+  const season = (date.getMonth() < 6) ? 'Spring': 'Fall'; // Semester pattern.
 
   let render = (
     <div>
@@ -52,9 +73,28 @@ function PublicPage() {
       <Paper style={{ minHeight: "100px" }}>
         <br />
         <div style={{ marginLeft: "10%" }}>
-          <Chip label="CSE-R17" clickable color="secondary" />
-        </div>
+		{classSites.map((cl, i) => 
+			<Chip label={cl} style={{marginLeft: '10px' }}onClick={()=> {handleClick(cl)}} clickable color="default" />)}
+	</div>
       </Paper>
+      <br/>
+      <Paper square style={{backgroundPosition: 'center',backgroundImage: `url(${"classroom.jpg"})`,backgroundRepeat: 'no-repeat', backgroundSize: 'cover', minHeight: '300px', height: '100%', width: '100%'}}>
+
+  <Grid
+    container
+    spacing={0}
+    align="center"
+    justify="center"
+    direction="column"
+    style={{minHeigh: '300px'}}
+  >
+	  <Grid item>
+		  <Typography variant="h1" style={{marginTop: '100px',color: '#000000',}}>{season} / {currentYear}</Typography>
+
+
+	  </Grid>
+  </Grid>
+	      </Paper>
     </div>
   );
   return <App userLogged={false} payload={render} />;
@@ -89,7 +129,8 @@ function UserPage(props) {
                   title={entry.title}
                   subjectCode={entry.subjectCode}
                   season={entry.season}
-                  desc={entry.desc}
+		  desc={entry.desc}
+		  year={entry.year}
                 />
               </Grid>
             ))}

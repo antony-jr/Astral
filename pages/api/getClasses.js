@@ -24,7 +24,8 @@ const handler = (req, res) => {
     }
     getConnection((err, con) => {
       if (err) {
-        res.statusCode = 200;
+      con.release();
+	      res.statusCode = 200;
         res.end(
           JSON.stringify({ error: true, reason: "cannot connect to database" })
         );
@@ -35,7 +36,8 @@ const handler = (req, res) => {
           req.session.username +
           "';",
         (error, results, fields) => {
-          if (error) {
+		if (error) {
+			con.release();
             res.statusCode = 200;
             res.end(
               JSON.stringify({ error: true, reason: "sql query failed" })
@@ -43,7 +45,8 @@ const handler = (req, res) => {
             return;
           }
 
-          if (results.length == 0) {
+		if (results.length == 0) {
+			con.release();
             res.statusCode = 200;
             res.end(
               JSON.stringify({
@@ -61,13 +64,15 @@ const handler = (req, res) => {
                 result["CourseID"] +
                 "';",
               (e, r, f) => {
-                if (e) {
+		      if (e) {
+			      con.release();
                   return;
                 }
                 let reqData = {
                   title: r[0]["Title"],
                   subjectCode: r[0]["SubjectCode"],
-                  season: result["Season"],
+		  season: result["Season"],
+		  year: result["Year"],
                   desc: r[0]["Description"],
                   location: result["ClassPage"]
                 };
@@ -75,7 +80,8 @@ const handler = (req, res) => {
 
                 // A little hackaround to avoid using the data before the map
                 // finishes.
-                if (iteration + 1 == results.length) {
+		      if (iteration + 1 == results.length) {
+			      con.release();
                   res.statusCode = 200;
                   res.end(JSON.stringify({ error: false, classes: reqDatas }));
                   return;

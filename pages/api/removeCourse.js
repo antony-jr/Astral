@@ -30,7 +30,8 @@ const handler = (req, res) => {
 	  const CourseID = crypto.createHash('md5').update(course + subjectcode +regulation).digest('hex');
    getConnection((err, con) => {
       if (err) {
-        res.statusCode = 200;
+      con.release();
+	      res.statusCode = 200;
         res.end(
           JSON.stringify({ error: true, reason: "cannot connect to database" })
         );
@@ -42,7 +43,8 @@ const handler = (req, res) => {
         "SELECT * FROM Courses WHERE CourseID='" +
           CourseID + "';",
         (error, results, fields) => {
-          if (error) {
+		if (error) {
+			con.release();
             res.statusCode = 200;
             res.end(
               JSON.stringify({ error: true, reason: "sql query failed" })
@@ -55,18 +57,21 @@ const handler = (req, res) => {
 	    con.query(
 		    "DELETE FROM Courses WHERE CourseID='" + CourseID + "';",
 		    (e, r, f) => {
-	    if (e) {
+			    if (e) {
+				    con.release();
             res.statusCode = 200;
             res.end(
               JSON.stringify({ error: true, reason: "sql query failed" }));
 	    return;
-	    }   
+			    }   
+			    con.release();
 		res.statusCode = 200;
 		res.end(JSON.stringify({error: false, remove: "success"}));
 		return;
 	    
 	    });
 	  } else {
+		  con.release();
             res.end(JSON.stringify({ error: false, remove: "failed", reason: "course does not exists" }));
           }
           return;

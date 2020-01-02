@@ -20,7 +20,8 @@ const handler = (req, res) => {
     ) {
     getConnection((err, con) => {
       if (err) {
-        res.statusCode = 200;
+      con.release();
+	      res.statusCode = 200;
         res.end(
           JSON.stringify({ error: true, reason: "cannot connect to database" })
         );
@@ -42,7 +43,8 @@ const handler = (req, res) => {
           hash +
 	  "';",
           (error, results, fields) => {
-          if (error) {
+		  if (error) {
+			  con.release();
             res.statusCode = 200;
             res.end(
               JSON.stringify({ error: true, reason: "sql query failed" })
@@ -54,6 +56,7 @@ const handler = (req, res) => {
 	  + req.session.username + 
 		  "' and PwdHash='" + newHash + "';", (e, r, f) => {
 			  if(e){
+				  con.release();
 	     res.statusCode = 200;
             res.end(
               JSON.stringify({ error: true, reason: "sql query failed" })
@@ -64,9 +67,11 @@ const handler = (req, res) => {
 			  
 	  res.statusCode = 200;
           if (r.length == 1) {
-            // Implies successful passsword change.
+		  // Implies successful passsword change.
+		  con.release();
             res.end(JSON.stringify({ error: false, passwordChange: "success" }));
-          } else {
+	  } else {
+		  con.release();
             res.end(JSON.stringify({ error: false, passwordChange: "failed" }));
 	  }
 		  });

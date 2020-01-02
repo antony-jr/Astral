@@ -6,7 +6,8 @@ export default (req, res) => {
   res.setHeader("Content-Type", "application/json");
   getConnection((err, con) => {
     if (err) {
-      res.statusCode = 200;
+      con.release();
+	    res.statusCode = 200;
       res.end(JSON.stringify({ error: true }));
       return;
     }
@@ -18,8 +19,8 @@ export default (req, res) => {
         res.end(JSON.stringify({ error: true }));
         return;
       }
-
-      res.statusCode = 200;
+con.release();
+	    res.statusCode= 200;
       res.end(JSON.stringify({ error: false, titles: results }));
       return;
     });

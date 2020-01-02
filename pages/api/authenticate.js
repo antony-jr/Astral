@@ -25,7 +25,8 @@ const handler = (req, res) => {
   ) {
     getConnection((err, con) => {
       if (err) {
-        res.statusCode = 200;
+      con.release();
+	      res.statusCode = 200;
         res.end(
           JSON.stringify({ error: true, reason: "cannot connect to database" })
         );
@@ -42,7 +43,8 @@ const handler = (req, res) => {
           hash +
           "';",
         (error, results, fields) => {
-          if (error) {
+		if (error) {
+			con.release();
             res.statusCode = 200;
             res.end(
               JSON.stringify({ error: true, reason: "sql query failed" })
@@ -53,11 +55,13 @@ const handler = (req, res) => {
           res.statusCode = 200;
           if (results.length == 1) {
             // Implies successful login.
-            req.session.userLogged = true;
+		  con.release();
+		  req.session.userLogged = true;
             req.session.username = req.body.username;
             req.session.legalName = results[0]["LegalName"];
             res.end(JSON.stringify({ error: false, login: "success" }));
-          } else {
+	  } else {
+		  con.release();
             res.end(JSON.stringify({ error: false, login: "failed" }));
           }
           return;

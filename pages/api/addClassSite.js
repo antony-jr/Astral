@@ -52,7 +52,8 @@ const handler = (req, res) => {
           ClassID + "';",
         (error, results, fields) => {
           if (error) {
-            res.statusCode = 200;
+	    con.release();	  
+	    res.statusCode = 200;
             res.end(
               JSON.stringify({ error: true, reason: "sql query failed" })
             );
@@ -60,7 +61,7 @@ const handler = (req, res) => {
           }
 
 	  if (results.length == 0) {
-            // Implies there is no course collision.
+            // Implies there is no class collision.
 	    con.query(
 		    "INSERT INTO `ClassSites` VALUES ('" + 
 		    ClassID + "', '" + 
@@ -70,19 +71,21 @@ const handler = (req, res) => {
 		    ClassPage + "', '" + 
 		    UserIncharge + "');",
 		    (e, r, f) => {
-	    if (e) {
+			    if (e) {
+	    con.release();
             res.statusCode = 200;
             res.end(
               JSON.stringify({ error: true, reason: "sql query failed" }));
 	    return;
 	    } 
-
+			    con.release();
 		res.statusCode = 200;
 		res.end(JSON.stringify({error: false, creation: "success"}));
 		return;
 	    
 	    });
 	  } else {
+		  con.release();
             res.end(JSON.stringify({ error: false, creation: "failed", reason: "class already exists" }));
           }
           return;

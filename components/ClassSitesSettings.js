@@ -170,6 +170,8 @@ export default function UserSettings(props){
 				if(data.creation == "success"){
 					enqueueSnackbar("Class site added", {variant: "success"});
 					refresh();
+				}else{
+					enqueueSnackbar(data.reason, {variant: "error"});
 				}
 			}
 		});

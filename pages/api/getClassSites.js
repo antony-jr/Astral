@@ -3,7 +3,8 @@ var getConnection = require("../../lib/getConnection.js");
 const handler = (req, res) => {
   res.setHeader("Content-Type", "application/json");
   getConnection((err, con) => {
-    if (err) {
+	  if (err) {
+		  con.release();
       res.statusCode = 200;
       res.end(JSON.stringify({ error: true, reason: "cannot connect to database" }));
       return;
@@ -11,7 +12,8 @@ const handler = (req, res) => {
 
     con.query("SELECT * FROM ClassSites;", (error, results, fields) => {
       if (error) {
-        res.statusCode = 200;
+	      con.release();
+	      res.statusCode = 200;
         res.end(JSON.stringify({ error: true, reason: "sql query failed" }));
         return;
       }
@@ -19,18 +21,19 @@ const handler = (req, res) => {
       var errored = false;
       var datas = [];
 
-      if(results.length == 0){
+	    if(results.length == 0){
+		    con.release();
 	      res.statusCode = 200;
 	      res.end(JSON.stringify({error: false, classes: []}));
 	      return;
       }
 	results.map((entry,iteration) => {
-	console.log(entry);
 	con.query("SELECT * FROM Courses WHERE CourseID='" +
 		  entry["CourseID"] + "';",
 		(e, r, f) => {
 	if(errored){ return; }
-	if(e){
+			if(e){
+				con.release();
 	errored = true;
         res.statusCode = 200;
         res.end(JSON.stringify({ error: true, reason: "sql query failed" }));
@@ -50,6 +53,7 @@ const handler = (req, res) => {
 		}
 	);
 			if(iteration + 1 == results.length){
+				con.release();
       res.statusCode = 200;
       res.end(JSON.stringify({ error: false, classes: datas }));
 				return;

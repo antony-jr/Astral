@@ -25,7 +25,8 @@ const handler = (req, res) => {
   ) {
     getConnection((err, con) => {
       if (err) {
-        res.statusCode = 200;
+      con.release();
+	      res.statusCode = 200;
         res.end(
           JSON.stringify({ error: true, reason: "cannot connect to database" })
         );
@@ -34,7 +35,8 @@ const handler = (req, res) => {
       con.query(
         "SELECT * FROM SiteConfig WHERE ValueKey='basicInfo';",
         (error, results, fields) => {
-          if (error) {
+		if (error) {
+			con.release();
             res.statusCode = 200;
             res.end(
               JSON.stringify({ error: true, reason: "sql query failed" })
@@ -48,7 +50,8 @@ const handler = (req, res) => {
 	       "UPDATE SiteConfig SET Value='" +
 		     JSON.stringify(req.body) + "' WHERE ValueKey='basicInfo';",
 		     (e,r,f) => {
-		 if(e){
+			     if(e){
+				     con.release();
 		       res.statusCode = 200;
             res.end(
               JSON.stringify({ error: true, reason: "sql query failed" })
@@ -56,9 +59,11 @@ const handler = (req, res) => {
             return;
        
 		 }
+			     con.release();
 	     res.end(JSON.stringify({ error: false, setAcademicYear: "success" }));
 	     });	     
-	 } else {
+	  } else {
+		  con.release();
             res.end(JSON.stringify({ error: true, reason: "unknown" }));
           }
           return;

@@ -38,7 +38,8 @@ const handler = (req, res) => {
 
    getConnection((err, con) => {
       if (err) {
-        res.statusCode = 200;
+	   con.release();
+	      res.statusCode = 200;
         res.end(
           JSON.stringify({ error: true, reason: "cannot connect to database" })
         );
@@ -50,7 +51,8 @@ const handler = (req, res) => {
         "SELECT * FROM Users WHERE UserID='" +
           username + "';",
         (error, results, fields) => {
-          if (error) {
+		if (error) {
+			con.release();
             res.statusCode = 200;
             res.end(
               JSON.stringify({ error: true, reason: "sql query failed" })
@@ -106,11 +108,13 @@ const handler = (req, res) => {
 		}
 		console.log("[info] Password for '" + username + "':" + password);
 		res.statusCode = 200;
-		res.end(JSON.stringify({error: false, creation: "success"}));
+			    con.release();
+			    res.end(JSON.stringify({error: false, creation: "success"}));
 		return;
 	    
 	    });
 	  } else {
+		  con.release();
             res.end(JSON.stringify({ error: false, creation: "failed", reason: "user already exists" }));
           }
           return;

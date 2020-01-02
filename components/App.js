@@ -37,7 +37,7 @@ class App extends React.Component {
         </Head>
         <style jsx global>{`
           body {
-            background: #f2f2f2;
+            background: #fafafa;
           }
         `}</style>
         <Grid

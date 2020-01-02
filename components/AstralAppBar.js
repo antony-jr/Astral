@@ -25,7 +25,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import Router from "next/router";
 import Box from "@material-ui/core/Box";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import SearchBar from './SearchBar.js';
 
 import { withSession } from "next-session";
 import fetch from "isomorphic-unfetch";
@@ -70,7 +70,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2)
   },
   appBar: {
-    backgroundColor: "rgba(256,256,256,1)"
+    backgroundColor: "#212121",
   },
   title: {
     flexGrow: 1,
@@ -83,7 +83,6 @@ const useStyles = makeStyles(theme => ({
   },
   searchGrid: {
     flexGrow: 1,
-    marginLeft: theme.spacing(2),
     [theme.breakpoints.up("sm")]: {
       marginLeft: 0
     }
@@ -91,10 +90,11 @@ const useStyles = makeStyles(theme => ({
   search: {
     width: "100%",
     position: "relative",
-    borderRadius: theme.shape.borderRadius,
+    //borderRadius: theme.shape.borderRadius,
+    borderRadius: 0,  
     backgroundColor: theme.palette.common.white,
     [theme.breakpoints.up("sm")]: {
-      width: "50%"
+      width: "60%"
     }
   },
   searchIcon: {
@@ -249,14 +249,8 @@ export default function AstralAppBar(props) {
 
   if (props.userLogged) {
     options = (
-      <Box display="flex" alignItems="center" flexDirection="row">
-        <Chip
-          variant="outlined"
-          icon={<FaceIcon />}
-          className={classes.avatar}
-          label={props.username}
-        />
-        <IconButton
+	<IconButton
+	  color="inherit"
           aria-label="more"
           aria-controls="long-menu"
           aria-haspopup="true"
@@ -264,12 +258,11 @@ export default function AstralAppBar(props) {
         >
           <MoreVertIcon />
         </IconButton>
-      </Box>
     );
   } else {
     options = (
       <Button
-        color="default"
+        color="inherit"
         variant="outlined"
         className={classes.loginButton}
         onClick={handleLoginClickOpen}
@@ -283,7 +276,7 @@ export default function AstralAppBar(props) {
       <HideOnScroll {...props}>
         <AppBar position="fixed" className={classes.appBar}>
           <Toolbar>
-            <img src="logo.png" alt="logo" className={classes.logo} />
+            <img src="logo_white.png" alt="logo" className={classes.logo} />
             <img src="logo_sm.png" alt="logo" className={classes.logoSm} />
             <Grid
               container
@@ -294,24 +287,10 @@ export default function AstralAppBar(props) {
               <div className={classes.search}>
                 <div className={classes.searchIcon}>
                   <SearchIcon />
-                </div>
-		<Autocomplete
-                  id="mainSearch"
-                  freeSolo
-                  options={[{ title: "Test" }].map(option => option.title)}
-                  renderInput={params => (
-                    <OutlinedInput
-                      {...params}
-                      placeholder="Search by Subject Code "
-                      classes={{
-                        root: classes.inputRoot,
-                        input: classes.inputInput
-                      }}
-                      InputProps={{ ...params.InputProps, type: "search" }}
-                    />
-                  )}
-		  />
-              </div>
+	  </div>
+	  	  <SearchBar />
+	
+  </div>
             </Grid>
             {options}
           </Toolbar>
@@ -427,7 +406,16 @@ export default function AstralAppBar(props) {
         open={Boolean(anchorEl)}
         onClose={handleProfileMenuClose}
       >
-        <MenuItem
+      <MenuItem disabled={true}>
+	      <Chip
+	  color="default"
+          variant="outlined"
+          icon={<FaceIcon />}
+          className={classes.avatar}
+          label={props.username}
+  />
+      </MenuItem>
+      <MenuItem
           key="dashboard"
           selected={profileMenuItemSelected == "dashboard"}
           onClick={handleDashboard}
