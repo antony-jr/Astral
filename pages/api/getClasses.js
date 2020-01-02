@@ -11,21 +11,21 @@ const handler = (req, res) => {
     );
     return;
   }
- if (req.session.userLogged) {
-    if(req.session.username == 'administrator'){
-	    res.statusCode = 200;
-            res.end(
-              JSON.stringify({
-                error: true,
-                reason: "no class for the administrator"
-              })
-            );
-	    return;
+  if (req.session.userLogged) {
+    if (req.session.username == "administrator") {
+      res.statusCode = 200;
+      res.end(
+        JSON.stringify({
+          error: true,
+          reason: "no class for the administrator"
+        })
+      );
+      return;
     }
     getConnection((err, con) => {
       if (err) {
-      con.release();
-	      res.statusCode = 200;
+        con.release();
+        res.statusCode = 200;
         res.end(
           JSON.stringify({ error: true, reason: "cannot connect to database" })
         );
@@ -36,8 +36,8 @@ const handler = (req, res) => {
           req.session.username +
           "';",
         (error, results, fields) => {
-		if (error) {
-			con.release();
+          if (error) {
+            con.release();
             res.statusCode = 200;
             res.end(
               JSON.stringify({ error: true, reason: "sql query failed" })
@@ -45,8 +45,8 @@ const handler = (req, res) => {
             return;
           }
 
-		if (results.length == 0) {
-			con.release();
+          if (results.length == 0) {
+            con.release();
             res.statusCode = 200;
             res.end(
               JSON.stringify({
@@ -64,15 +64,15 @@ const handler = (req, res) => {
                 result["CourseID"] +
                 "';",
               (e, r, f) => {
-		      if (e) {
-			      con.release();
+                if (e) {
+                  con.release();
                   return;
                 }
                 let reqData = {
                   title: r[0]["Title"],
                   subjectCode: r[0]["SubjectCode"],
-		  season: result["Season"],
-		  year: result["Year"],
+                  season: result["Season"],
+                  year: result["Year"],
                   desc: r[0]["Description"],
                   location: result["ClassPage"]
                 };
@@ -80,8 +80,8 @@ const handler = (req, res) => {
 
                 // A little hackaround to avoid using the data before the map
                 // finishes.
-		      if (iteration + 1 == results.length) {
-			      con.release();
+                if (iteration + 1 == results.length) {
+                  con.release();
                   res.statusCode = 200;
                   res.end(JSON.stringify({ error: false, classes: reqDatas }));
                   return;

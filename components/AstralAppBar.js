@@ -25,7 +25,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import Router from "next/router";
 import Box from "@material-ui/core/Box";
-import SearchBar from './SearchBar.js';
+import SearchBar from "./SearchBar.js";
 
 import { withSession } from "next-session";
 import fetch from "isomorphic-unfetch";
@@ -70,7 +70,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2)
   },
   appBar: {
-    backgroundColor: "#212121",
+    backgroundColor: "#212121"
   },
   title: {
     flexGrow: 1,
@@ -91,7 +91,7 @@ const useStyles = makeStyles(theme => ({
     width: "100%",
     position: "relative",
     //borderRadius: theme.shape.borderRadius,
-    borderRadius: 0,  
+    borderRadius: 0,
     backgroundColor: theme.palette.common.white,
     [theme.breakpoints.up("sm")]: {
       width: "60%"
@@ -118,30 +118,36 @@ const useStyles = makeStyles(theme => ({
 
 export default function AstralAppBar(props) {
   const [openLoginDialog, setOpenLoginDialog] = React.useState(false);
-  const [openPasswordChangeDialog, setOpenPasswordChangeDialog] = React.useState(false);	
+  const [
+    openPasswordChangeDialog,
+    setOpenPasswordChangeDialog
+  ] = React.useState(false);
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [oldPassword, setOldPassword] = React.useState("");
   const [newPassword, setNewPassword] = React.useState("");
-  const [newPasswordConfirmation, setNewPasswordConfirmation] = React.useState("");     
+  const [newPasswordConfirmation, setNewPasswordConfirmation] = React.useState(
+    ""
+  );
   const [anchorEl, setAnchorEl] = React.useState(false);
   const [loginFailed, setLoginFailed] = React.useState(false);
   const [passwordChangeFailed, setPasswordChangeFailed] = React.useState(false);
-  const [passwordChangeError, setPasswordChangeError] = React.useState('');
+  const [passwordChangeError, setPasswordChangeError] = React.useState("");
   const [profileMenuItemSelected, setProfileMenuItemSelected] = React.useState(
     "dashboard"
   );
   const classes = useStyles();
   let options = 0;
-  let dialogContent = 0;	
+  let dialogContent = 0;
   if (loginFailed) {
-    dialogContent = <Typography color="error">Login failed, Please try again.</Typography>;
-  }else {
+    dialogContent = (
+      <Typography color="error">Login failed, Please try again.</Typography>
+    );
+  } else {
     dialogContent = (
       <Typography>Use your registered username to login.</Typography>
     );
   }
-
 
   const handleOldPasswordChange = e => {
     setOldPassword(e.target.value);
@@ -150,7 +156,7 @@ export default function AstralAppBar(props) {
   const handleNewPasswordChange = e => {
     setNewPassword(e.target.value);
   };
-  
+
   const handleNewPasswordConfirmationChange = e => {
     setNewPasswordConfirmation(e.target.value);
   };
@@ -164,13 +170,13 @@ export default function AstralAppBar(props) {
   };
 
   const handlePasswordChangeClick = () => {
-    handleProfileMenuClose();	  
+    handleProfileMenuClose();
     setPasswordChangeFailed(false);
     setOldPassword("");
     setNewPassword("");
     setOpenPasswordChangeDialog(true);
-  }
- 
+  };
+
   const handleLoginClickOpen = () => {
     setLoginFailed(false); // Reset any errors
     setUsername("");
@@ -178,12 +184,12 @@ export default function AstralAppBar(props) {
     setOpenLoginDialog(true);
   };
 
-  const changePassword = async () => { 
-	  if(newPassword != newPasswordConfirmation){
-		  setPasswordChangeError("The new password did not match.");
-		  setPasswordChangeFailed(true);
-		  return;
-	  }
+  const changePassword = async () => {
+    if (newPassword != newPasswordConfirmation) {
+      setPasswordChangeError("The new password did not match.");
+      setPasswordChangeFailed(true);
+      return;
+    }
     const data = new URLSearchParams();
     data.append("oldPassword", oldPassword);
     data.append("newPassword", newPassword);
@@ -200,9 +206,12 @@ export default function AstralAppBar(props) {
     } else if (json.passwordChange == "success") {
       setOpenPasswordChangeDialog(false);
     } else if (json.passwordChange == "failed") {
-	  setPasswordChangeError("Could not change password, Possible that you have entered the wrong password.");	     setPasswordChangeFailed(true);
+      setPasswordChangeError(
+        "Could not change password, Possible that you have entered the wrong password."
+      );
+      setPasswordChangeFailed(true);
     }
-  }
+  };
 
   const handleLogin = async () => {
     const data = new URLSearchParams();
@@ -233,9 +242,9 @@ export default function AstralAppBar(props) {
   const handleProfileMenuClick = event => {
     setAnchorEl(event.currentTarget);
   };
-  
+
   const handleDashboard = () => {
-	  window.location.href = '/';
+    window.location.href = "/";
   };
 
   const handleLogout = async () => {
@@ -249,15 +258,15 @@ export default function AstralAppBar(props) {
 
   if (props.userLogged) {
     options = (
-	<IconButton
-	  color="inherit"
-          aria-label="more"
-          aria-controls="long-menu"
-          aria-haspopup="true"
-          onClick={handleProfileMenuClick}
-        >
-          <MoreVertIcon />
-        </IconButton>
+      <IconButton
+        color="inherit"
+        aria-label="more"
+        aria-controls="long-menu"
+        aria-haspopup="true"
+        onClick={handleProfileMenuClick}
+      >
+        <MoreVertIcon />
+      </IconButton>
     );
   } else {
     options = (
@@ -287,10 +296,9 @@ export default function AstralAppBar(props) {
               <div className={classes.search}>
                 <div className={classes.searchIcon}>
                   <SearchIcon />
-	  </div>
-	  	  <SearchBar />
-	
-  </div>
+                </div>
+                <SearchBar />
+              </div>
             </Grid>
             {options}
           </Toolbar>
@@ -343,13 +351,18 @@ export default function AstralAppBar(props) {
       </Dialog>
       <Dialog
         open={openPasswordChangeDialog}
-	onClose={() => {setOpenPasswordChangeDialog(false)} }
+        onClose={() => {
+          setOpenPasswordChangeDialog(false);
+        }}
         aria-labelledby="password-change-dialog"
       >
         <DialogTitle id="password-change-dialog">Change Password</DialogTitle>
         <DialogContent>
-		<DialogContentText>{passwordChangeFailed && 
-			                (<Typography color="error">{passwordChangeError}</Typography>)}</DialogContentText>
+          <DialogContentText>
+            {passwordChangeFailed && (
+              <Typography color="error">{passwordChangeError}</Typography>
+            )}
+          </DialogContentText>
           <TextField
             error={passwordChangeFailed}
             autoFocus
@@ -370,8 +383,8 @@ export default function AstralAppBar(props) {
             fullWidth
             value={newPassword}
             onChange={handleNewPasswordChange}
-        />
-	<TextField
+          />
+          <TextField
             error={passwordChangeFailed}
             margin="dense"
             id="newpasswordconfirmation"
@@ -387,10 +400,14 @@ export default function AstralAppBar(props) {
               }
             }}
           />
-        
         </DialogContent>
         <DialogActions>
-	<Button onClick={()=> { setOpenPasswordChangeDialog(false); }} color="primary">
+          <Button
+            onClick={() => {
+              setOpenPasswordChangeDialog(false);
+            }}
+            color="primary"
+          >
             Cancel
           </Button>
           <Button onClick={changePassword} color="primary">
@@ -398,7 +415,7 @@ export default function AstralAppBar(props) {
           </Button>
         </DialogActions>
       </Dialog>
-      
+
       <Menu
         id="long-menu"
         anchorEl={anchorEl}
@@ -406,29 +423,29 @@ export default function AstralAppBar(props) {
         open={Boolean(anchorEl)}
         onClose={handleProfileMenuClose}
       >
-      <MenuItem disabled={true}>
-	      <Chip
-	  color="default"
-          variant="outlined"
-          icon={<FaceIcon />}
-          className={classes.avatar}
-          label={props.username}
-  />
-      </MenuItem>
-      <MenuItem
+        <MenuItem disabled={true}>
+          <Chip
+            color="default"
+            variant="outlined"
+            icon={<FaceIcon />}
+            className={classes.avatar}
+            label={props.username}
+          />
+        </MenuItem>
+        <MenuItem
           key="dashboard"
           selected={profileMenuItemSelected == "dashboard"}
           onClick={handleDashboard}
         >
           Dashboard
-       </MenuItem>
-       <MenuItem
-	  key="changepassword"
-	  selected={profileMenuItemSelected == "changepassword"}
-	  onClick={handlePasswordChangeClick}
-        > 
-		Change Password
-	</MenuItem>
+        </MenuItem>
+        <MenuItem
+          key="changepassword"
+          selected={profileMenuItemSelected == "changepassword"}
+          onClick={handlePasswordChangeClick}
+        >
+          Change Password
+        </MenuItem>
         <MenuItem
           key="logout"
           selected={profileMenuItemSelected == "logout"}

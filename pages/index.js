@@ -26,75 +26,94 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function PublicPage() {
-  const [classSiteYear, setClassSiteYear] = React.useState('');
+  const [classSiteYear, setClassSiteYear] = React.useState("");
   const [classSites, setClassSites] = React.useState([]);
   const [resultLoading, setResultLoading] = React.useState(false);
   const [results, setResults] = React.useState([]);
 
   React.useEffect(() => {
-		axios
-		.get('/api/getAcademicYear')
-		.then(({data}) => {
-			if(data.error){
-				setClassSiteYear('Unknown');
-				console.log(data);
-			}else{
-				setClassSiteYear(data.fromAcademicYear.toString() + 
-					         " - " + 
-					         data.toAcademicYear.toString());
-			}
-		});
-	  	
-	  	axios
-	  	.get('/api/getClassSitesForFrontPage')
-	        .then(({data}) => {
-			if(!data.error){
-				setClassSites(data.sites);
-			}
-		});
+    axios.get("/api/getAcademicYear").then(({ data }) => {
+      if (data.error) {
+        setClassSiteYear("Unknown");
+        console.log(data);
+      } else {
+        setClassSiteYear(
+          data.fromAcademicYear.toString() +
+            " - " +
+            data.toAcademicYear.toString()
+        );
+      }
+    });
 
+    axios.get("/api/getClassSitesForFrontPage").then(({ data }) => {
+      if (!data.error) {
+        setClassSites(data.sites);
+      }
+    });
   }, []);
 
   const handleClick = cl => {
-	  alert(cl);
+    alert(cl);
   };
 
   const date = new Date();
   const currentYear = date.getFullYear();
-  const season = (date.getMonth() < 6) ? 'Spring': 'Fall'; // Semester pattern.
+  const season = date.getMonth() < 6 ? "Spring" : "Fall"; // Semester pattern.
 
   let render = (
     <div>
       <Typography variant="h4">
-	 Class Sites / <b>{classSiteYear}</b>
+        Class Sites / <b>{classSiteYear}</b>
       </Typography>
       <Divider />
       <br />
       <Paper style={{ minHeight: "100px" }}>
         <br />
         <div style={{ marginLeft: "10%" }}>
-		{classSites.map((cl, i) => 
-			<Chip label={cl} style={{marginLeft: '10px' }}onClick={()=> {handleClick(cl)}} clickable color="default" />)}
-	</div>
+          {classSites.map((cl, i) => (
+            <Chip
+              label={cl}
+              style={{ marginLeft: "10px" }}
+              onClick={() => {
+                handleClick(cl);
+              }}
+              clickable
+              color="default"
+            />
+          ))}
+        </div>
       </Paper>
-      <br/>
-      <Paper square style={{backgroundPosition: 'center',backgroundImage: `url(${"classroom.jpg"})`,backgroundRepeat: 'no-repeat', backgroundSize: 'cover', minHeight: '300px', height: '100%', width: '100%'}}>
-
-  <Grid
-    container
-    spacing={0}
-    align="center"
-    justify="center"
-    direction="column"
-    style={{minHeigh: '300px'}}
-  >
-	  <Grid item>
-		  <Typography variant="h1" style={{marginTop: '100px',color: '#000000',}}>{season} / {currentYear}</Typography>
-
-
-	  </Grid>
-  </Grid>
-	      </Paper>
+      <br />
+      <Paper
+        square
+        style={{
+          backgroundPosition: "center",
+          backgroundImage: `url(${"classroom.jpg"})`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+          minHeight: "300px",
+          height: "100%",
+          width: "100%"
+        }}
+      >
+        <Grid
+          container
+          spacing={0}
+          align="center"
+          justify="center"
+          direction="column"
+          style={{ minHeigh: "300px" }}
+        >
+          <Grid item>
+            <Typography
+              variant="h1"
+              style={{ marginTop: "100px", color: "#000000" }}
+            >
+              {season} / {currentYear}
+            </Typography>
+          </Grid>
+        </Grid>
+      </Paper>
     </div>
   );
   return <App userLogged={false} payload={render} />;
@@ -129,8 +148,8 @@ function UserPage(props) {
                   title={entry.title}
                   subjectCode={entry.subjectCode}
                   season={entry.season}
-		  desc={entry.desc}
-		  year={entry.year}
+                  desc={entry.desc}
+                  year={entry.year}
                 />
               </Grid>
             ))}

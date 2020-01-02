@@ -7,7 +7,7 @@ export default (req, res) => {
   getConnection((err, con) => {
     if (err) {
       con.release();
-	    res.statusCode = 200;
+      res.statusCode = 200;
       res.end(JSON.stringify({ error: true }));
       return;
     }
@@ -19,8 +19,8 @@ export default (req, res) => {
         res.end(JSON.stringify({ error: true }));
         return;
       }
-con.release();
-	    res.statusCode= 200;
+      con.release();
+      res.statusCode = 200;
       res.end(JSON.stringify({ error: false, titles: results }));
       return;
     });

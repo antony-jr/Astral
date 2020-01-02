@@ -12,39 +12,39 @@ const handler = (req, res) => {
     );
     return;
   }
-  if(!req.session.userLogged || req.session.username != 'administrator'){
-	  res.statusCode = 200;
-	  res.end(JSON.stringify({error: true, reason: "connection is not authenticated"}));
-	  return;
+  if (!req.session.userLogged || req.session.username != "administrator") {
+    res.statusCode = 200;
+    res.end(
+      JSON.stringify({ error: true, reason: "connection is not authenticated" })
+    );
+    return;
   }
 
-    getConnection((err, con) => {
-      if (err) {
-       con.release();
-	      res.statusCode = 200;
-        res.end(
-          JSON.stringify({ error: true, reason: "cannot connect to database" })
-        );
+  getConnection((err, con) => {
+    if (err) {
+      con.release();
+      res.statusCode = 200;
+      res.end(
+        JSON.stringify({ error: true, reason: "cannot connect to database" })
+      );
+      return;
+    }
+    con.query(
+      "SELECT LegalName,UserID,EmailID FROM Users WHERE UserID != 'administrator';",
+      (error, results, fields) => {
+        if (error) {
+          con.release();
+          res.statusCode = 200;
+          res.end(JSON.stringify({ error: true, reason: "sql query failed" }));
+          return;
+        }
+        con.release();
+        res.statusCode = 200;
+        res.end(JSON.stringify({ error: false, users: results }));
         return;
       }
-      con.query(
-        "SELECT LegalName,UserID,EmailID FROM Users WHERE UserID != 'administrator';",
-        (error, results, fields) => {
-		if (error) {
-			con.release();
-            res.statusCode = 200;
-            res.end(
-              JSON.stringify({ error: true, reason: "sql query failed" })
-            );
-            return;
-		}
-		con.release();
-	  res.statusCode = 200;
-	  res.end(JSON.stringify({error: false, users: results}));
-	  return;
-        }
-      );
-    });
+    );
+  });
 };
 
 export default withSession(handler);

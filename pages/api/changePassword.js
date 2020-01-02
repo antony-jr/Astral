@@ -15,79 +15,102 @@ const handler = (req, res) => {
 
   if (req.session.userLogged) {
     if (
-    typeof req.body.oldPassword == "string" &&
-    typeof req.body.newPassword == "string"
+      typeof req.body.oldPassword == "string" &&
+      typeof req.body.newPassword == "string"
     ) {
-    getConnection((err, con) => {
-      if (err) {
-      con.release();
-	      res.statusCode = 200;
-        res.end(
-          JSON.stringify({ error: true, reason: "cannot connect to database" })
-        );
-        return;
-      }
-      const hash = crypto
-        .createHash("md5")
-        .update(req.body.oldPassword)
-	.digest("hex");
-      const newHash = crypto
-	.createHash("md5")
-	.update(req.body.newPassword)
-	.digest("hex");
+      getConnection((err, con) => {
+        if (err) {
+          con.release();
+          res.statusCode = 200;
+          res.end(
+            JSON.stringify({
+              error: true,
+              reason: "cannot connect to database"
+            })
+          );
+          return;
+        }
+        const hash = crypto
+          .createHash("md5")
+          .update(req.body.oldPassword)
+          .digest("hex");
+        const newHash = crypto
+          .createHash("md5")
+          .update(req.body.newPassword)
+          .digest("hex");
 
-      con.query(
-        "UPDATE Users SET PwdHash='" + newHash + "' WHERE UserID='" +
-          req.session.username +
-          "' and PwdHash='" +
-          hash +
-	  "';",
+        con.query(
+          "UPDATE Users SET PwdHash='" +
+            newHash +
+            "' WHERE UserID='" +
+            req.session.username +
+            "' and PwdHash='" +
+            hash +
+            "';",
           (error, results, fields) => {
-		  if (error) {
-			  con.release();
-            res.statusCode = 200;
-            res.end(
-              JSON.stringify({ error: true, reason: "sql query failed" })
+            if (error) {
+              con.release();
+              res.statusCode = 200;
+              res.end(
+                JSON.stringify({ error: true, reason: "sql query failed" })
+              );
+              return;
+            }
+
+            con.query(
+              "SELECT * FROM Users WHERE UserID='" +
+                req.session.username +
+                "' and PwdHash='" +
+                newHash +
+                "';",
+              (e, r, f) => {
+                if (e) {
+                  con.release();
+                  res.statusCode = 200;
+                  res.end(
+                    JSON.stringify({ error: true, reason: "sql query failed" })
+                  );
+
+                  return;
+                }
+
+                res.statusCode = 200;
+                if (r.length == 1) {
+                  // Implies successful passsword change.
+                  con.release();
+                  res.end(
+                    JSON.stringify({ error: false, passwordChange: "success" })
+                  );
+                } else {
+                  con.release();
+                  res.end(
+                    JSON.stringify({ error: false, passwordChange: "failed" })
+                  );
+                }
+              }
             );
             return;
           }
-
-          con.query("SELECT * FROM Users WHERE UserID='" 
-	  + req.session.username + 
-		  "' and PwdHash='" + newHash + "';", (e, r, f) => {
-			  if(e){
-				  con.release();
-	     res.statusCode = 200;
-            res.end(
-              JSON.stringify({ error: true, reason: "sql query failed" })
-            );
-        	  
-		  return;
-	  }
-			  
-	  res.statusCode = 200;
-          if (r.length == 1) {
-		  // Implies successful passsword change.
-		  con.release();
-            res.end(JSON.stringify({ error: false, passwordChange: "success" }));
-	  } else {
-		  con.release();
-            res.end(JSON.stringify({ error: false, passwordChange: "failed" }));
-	  }
-		  });
-          return;
-        }
+        );
+      });
+    } else {
+      res.statusCode = 200;
+      res.end(
+        JSON.stringify({
+          error: true,
+          reason: "expected string in post body values"
+        })
       );
-    });
- 
-    }else{
-	    res.statusCode = 200;
-	    res.end(JSON.stringify({error: true, reason: "expected string in post body values"}));
     }
     return;
-  }else{
+  } else {
     res.statusCode = 200;
-    res.end(JSON.stringify({error: true, reason: "the connection needs to be authenticated."}));
+    res.end(
+      JSON.stringify({
+        error: true,
+        reason: "the connection needs to be authenticated."
+      })
+    );
     return;
   }
 };

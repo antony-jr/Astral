@@ -15,7 +15,9 @@ const handler = (req, res) => {
 
   if (!req.session.userLogged) {
     res.statusCode = 200;
-    res.end(JSON.stringify({ error: true, reason: "connection is not authenticated"}));
+    res.end(
+      JSON.stringify({ error: true, reason: "connection is not authenticated" })
+    );
     return;
   }
 
@@ -25,8 +27,8 @@ const handler = (req, res) => {
   ) {
     getConnection((err, con) => {
       if (err) {
-      con.release();
-	      res.statusCode = 200;
+        con.release();
+        res.statusCode = 200;
         res.end(
           JSON.stringify({ error: true, reason: "cannot connect to database" })
         );
@@ -35,8 +37,8 @@ const handler = (req, res) => {
       con.query(
         "SELECT * FROM SiteConfig WHERE ValueKey='basicInfo';",
         (error, results, fields) => {
-		if (error) {
-			con.release();
+          if (error) {
+            con.release();
             res.statusCode = 200;
             res.end(
               JSON.stringify({ error: true, reason: "sql query failed" })
@@ -45,25 +47,28 @@ const handler = (req, res) => {
           }
 
           res.statusCode = 200;
-	  if (results.length == 1) {
-	     con.query(
-	       "UPDATE SiteConfig SET Value='" +
-		     JSON.stringify(req.body) + "' WHERE ValueKey='basicInfo';",
-		     (e,r,f) => {
-			     if(e){
-				     con.release();
-		       res.statusCode = 200;
-            res.end(
-              JSON.stringify({ error: true, reason: "sql query failed" })
+          if (results.length == 1) {
+            con.query(
+              "UPDATE SiteConfig SET Value='" +
+                JSON.stringify(req.body) +
+                "' WHERE ValueKey='basicInfo';",
+              (e, r, f) => {
+                if (e) {
+                  con.release();
+                  res.statusCode = 200;
+                  res.end(
+                    JSON.stringify({ error: true, reason: "sql query failed" })
+                  );
+                  return;
+                }
+                con.release();
+                res.end(
+                  JSON.stringify({ error: false, setAcademicYear: "success" })
+                );
+              }
             );
-            return;
-       
-		 }
-			     con.release();
-	     res.end(JSON.stringify({ error: false, setAcademicYear: "success" }));
-	     });	     
-	  } else {
-		  con.release();
+          } else {
+            con.release();
             res.end(JSON.stringify({ error: true, reason: "unknown" }));
           }
           return;

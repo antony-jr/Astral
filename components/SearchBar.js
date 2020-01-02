@@ -1,8 +1,8 @@
-import React from 'react';
-import axios from 'axios';
-import TextField from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import React from "react";
+import axios from "axios";
+import TextField from "@material-ui/core/TextField";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 export default function SearchBar(props) {
   const [open, setOpen] = React.useState(false);
@@ -17,8 +17,8 @@ export default function SearchBar(props) {
     }
 
     (async () => {
-      const response = await axios.get('/api/getCourses');
-      const courses= response.data.courses;
+      const response = await axios.get("/api/getCourses");
+      const courses = response.data.courses;
 
       if (active) {
         setOptions(courses);
@@ -38,7 +38,7 @@ export default function SearchBar(props) {
 
   return (
     <Autocomplete
-      style={{ width: '100%' }}
+      style={{ width: "100%" }}
       open={open}
       onChange={props.onChange}
       onOpen={() => {
@@ -47,27 +47,33 @@ export default function SearchBar(props) {
       onClose={() => {
         setOpen(false);
       }}
-      getOptionSelected={(option, value) => option.Title === value.Title || option.SubjectCode === value.SubjectCode}
-      getOptionLabel={option => option.SubjectCode+ "-R" + option.Regulation +": " + option.Title}
+      getOptionSelected={(option, value) =>
+        option.Title === value.Title || option.SubjectCode === value.SubjectCode
+      }
+      getOptionLabel={option =>
+        option.SubjectCode + "-R" + option.Regulation + ": " + option.Title
+      }
       options={options}
       loading={loading}
       renderInput={params => (
         <TextField
-	  {...params}
-	  color="inherit"
-	  error={props.error}
-	  fullWidth
-	  placeholder="Search"
-	  variant="standard"
+          {...params}
+          color="inherit"
+          error={props.error}
+          fullWidth
+          placeholder="Search"
+          variant="standard"
           InputProps={{
-	    ...params.InputProps,
-	    style: {paddingLeft: '45px', paddingTop: '4px'},
+            ...params.InputProps,
+            style: { paddingLeft: "45px", paddingTop: "4px" },
             endAdornment: (
               <React.Fragment>
-                {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                {loading ? (
+                  <CircularProgress color="inherit" size={20} />
+                ) : null}
                 {params.InputProps.endAdornment}
               </React.Fragment>
-            ),
+            )
           }}
         />
       )}

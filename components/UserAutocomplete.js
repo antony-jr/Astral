@@ -1,8 +1,8 @@
-import React from 'react';
-import axios from 'axios';
-import TextField from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import React from "react";
+import axios from "axios";
+import TextField from "@material-ui/core/TextField";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 export default function UserAutocomplete(props) {
   const [open, setOpen] = React.useState(false);
@@ -17,12 +17,12 @@ export default function UserAutocomplete(props) {
     }
 
     (async () => {
-      const response = await axios.get('/api/getUsers');
-      if(response.data.error){
-	   setOptions([]);
-	   return;
+      const response = await axios.get("/api/getUsers");
+      if (response.data.error) {
+        setOptions([]);
+        return;
       }
-      const users= response.data.users;
+      const users = response.data.users;
 
       if (active) {
         setOptions(users);
@@ -42,7 +42,7 @@ export default function UserAutocomplete(props) {
 
   return (
     <Autocomplete
-      style={{ width: '100%' }}
+      style={{ width: "100%" }}
       open={open}
       onChange={props.onChange}
       onOpen={() => {
@@ -51,25 +51,29 @@ export default function UserAutocomplete(props) {
       onClose={() => {
         setOpen(false);
       }}
-      getOptionSelected={(option, value) => option.LegalName === value.LegalName || option.UserID === value.UserID}
+      getOptionSelected={(option, value) =>
+        option.LegalName === value.LegalName || option.UserID === value.UserID
+      }
       getOptionLabel={option => option.UserID + "(" + option.LegalName + ")"}
       options={options}
       loading={loading}
       renderInput={params => (
         <TextField
           {...params}
-	  error={props.error}	  
+          error={props.error}
           label="User Incharge"
           fullWidth
-	  variant="outlined"
+          variant="outlined"
           InputProps={{
             ...params.InputProps,
             endAdornment: (
               <React.Fragment>
-                {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                {loading ? (
+                  <CircularProgress color="inherit" size={20} />
+                ) : null}
                 {params.InputProps.endAdornment}
               </React.Fragment>
-            ),
+            )
           }}
         />
       )}

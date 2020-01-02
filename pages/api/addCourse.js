@@ -1,9 +1,8 @@
 import { withSession } from "next-session";
-import siteConfig from '../../siteConfig.json';
+import siteConfig from "../../siteConfig.json";
 
 var getConnection = require("../../lib/getConnection.js");
 var crypto = require("crypto");
-
 
 const handler = (req, res) => {
   res.setHeader("Content-Type", "application/json");
@@ -15,41 +14,43 @@ const handler = (req, res) => {
     return;
   }
 
-  if (!req.session.userLogged || !req.session.username == 'administrator') {
+  if (!req.session.userLogged || !req.session.username == "administrator") {
     res.statusCode = 200;
-    res.end(JSON.stringify({ error: false, reason: "connection is not authenticated as the administrator" }));
+    res.end(
+      JSON.stringify({
+        error: false,
+        reason: "connection is not authenticated as the administrator"
+      })
+    );
     return;
   }
 
-  const {course, regulation, subjectcode, title, description} = req.body;
-
-  
+  const { course, regulation, subjectcode, title, description } = req.body;
 
   if (
-	  typeof course == "string" &&
-	  typeof regulation == "string" &&
-	  typeof subjectcode == "string" &&
-	  typeof title == "string" &&
-	  typeof description == "string"
+    typeof course == "string" &&
+    typeof regulation == "string" &&
+    typeof subjectcode == "string" &&
+    typeof title == "string" &&
+    typeof description == "string"
   ) {
-   getConnection((err, con) => {
+    getConnection((err, con) => {
       if (err) {
-	     con.release();
-	      res.statusCode = 200;
+        con.release();
+        res.statusCode = 200;
         res.end(
           JSON.stringify({ error: true, reason: "cannot connect to database" })
         );
         return;
       }
 
-     const CourseID = crypto
+      const CourseID = crypto
         .createHash("md5")
         .update(course + subjectcode + regulation)
         .digest("hex");
-    
+
       con.query(
-        "SELECT * FROM Courses WHERE CourseID='" +
-          CourseID + "';",
+        "SELECT * FROM Courses WHERE CourseID='" + CourseID + "';",
         (error, results, fields) => {
           if (error) {
             res.statusCode = 200;
@@ -59,33 +60,46 @@ const handler = (req, res) => {
             return;
           }
 
-	  if (results.length == 0) {
+          if (results.length == 0) {
             // Implies there is no course collision.
-	    con.query(
-		    "INSERT INTO `Courses` VALUES ('" + 
-		    CourseID + "', '" + 
-		    course + "', '" + 
-		    subjectcode + "', " + 
-		    regulation + ", '" + 
-		    title + "', '" + 
-		    description + "', NULL);",
-		    (e, r, f) => {
-			    if (e) {
-				    con.release();
-            res.statusCode = 200;
+            con.query(
+              "INSERT INTO `Courses` VALUES ('" +
+                CourseID +
+                "', '" +
+                course +
+                "', '" +
+                subjectcode +
+                "', " +
+                regulation +
+                ", '" +
+                title +
+                "', '" +
+                description +
+                "', NULL);",
+              (e, r, f) => {
+                if (e) {
+                  con.release();
+                  res.statusCode = 200;
+                  res.end(
+                    JSON.stringify({ error: true, reason: "sql query failed" })
+                  );
+                  return;
+                }
+                con.release();
+                res.statusCode = 200;
+                res.end(JSON.stringify({ error: false, creation: "success" }));
+                return;
+              }
+            );
+          } else {
+            con.release();
             res.end(
-              JSON.stringify({ error: true, reason: "sql query failed" }));
-	    return;
-	    } 
-con.release();
-		res.statusCode = 200;
-		res.end(JSON.stringify({error: false, creation: "success"}));
-		return;
-	    
-	    });
-	  } else {
-		  con.release();
-            res.end(JSON.stringify({ error: false, creation: "failed", reason: "course already exists" }));
+              JSON.stringify({
+                error: false,
+                creation: "failed",
+                reason: "course already exists"
+              })
+            );
           }
           return;
         }

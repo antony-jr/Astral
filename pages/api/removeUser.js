@@ -12,40 +12,46 @@ const handler = (req, res) => {
     return;
   }
 
-  if (!req.session.userLogged || !req.session.username == 'administrator') {
+  if (!req.session.userLogged || !req.session.username == "administrator") {
     res.statusCode = 200;
-    res.end(JSON.stringify({ error: false, reason: "connection is not authenticated as the administrator" }));
+    res.end(
+      JSON.stringify({
+        error: false,
+        reason: "connection is not authenticated as the administrator"
+      })
+    );
     return;
   }
 
-  const {username} = req.body;
+  const { username } = req.body;
 
-  if (
-    typeof username == "string"
-  ) {
-	if(username.toLowerCase() == 'administrator'){
-    		res.statusCode = 200;
-    		res.end(JSON.stringify({ error: false, reason: "cannot delete reserved username" }));
-    		return;
-  	}
+  if (typeof username == "string") {
+    if (username.toLowerCase() == "administrator") {
+      res.statusCode = 200;
+      res.end(
+        JSON.stringify({
+          error: false,
+          reason: "cannot delete reserved username"
+        })
+      );
+      return;
+    }
 
-   getConnection((err, con) => {
+    getConnection((err, con) => {
       if (err) {
-      con.release();
-	      res.statusCode = 200;
+        con.release();
+        res.statusCode = 200;
         res.end(
           JSON.stringify({ error: true, reason: "cannot connect to database" })
         );
         return;
       }
 
-	    
       con.query(
-        "SELECT * FROM Users WHERE UserID='" +
-          username + "';",
+        "SELECT * FROM Users WHERE UserID='" + username + "';",
         (error, results, fields) => {
-		if (error) {
-			con.release();
+          if (error) {
+            con.release();
             res.statusCode = 200;
             res.end(
               JSON.stringify({ error: true, reason: "sql query failed" })
@@ -54,26 +60,33 @@ const handler = (req, res) => {
           }
 
           res.statusCode = 200;
-	  if (results.length == 1) {
-	    con.query(
-		    "DELETE FROM Users WHERE UserID='" + username + "';",
-		    (e, r, f) => {
-			    if (e) {
-				    con.release();
-            res.statusCode = 200;
+          if (results.length == 1) {
+            con.query(
+              "DELETE FROM Users WHERE UserID='" + username + "';",
+              (e, r, f) => {
+                if (e) {
+                  con.release();
+                  res.statusCode = 200;
+                  res.end(
+                    JSON.stringify({ error: true, reason: "sql query failed" })
+                  );
+                  return;
+                }
+                con.release();
+                res.statusCode = 200;
+                res.end(JSON.stringify({ error: false, remove: "success" }));
+                return;
+              }
+            );
+          } else {
+            con.release();
             res.end(
-              JSON.stringify({ error: true, reason: "sql query failed" }));
-	    return;
-			    }   
-			    con.release();
-		res.statusCode = 200;
-		res.end(JSON.stringify({error: false, remove: "success"}));
-		return;
-	    
-	    });
-	  } else {
-		  con.release();
-            res.end(JSON.stringify({ error: false, remove: "failed", reason: "user does not exists" }));
+              JSON.stringify({
+                error: false,
+                remove: "failed",
+                reason: "user does not exists"
+              })
+            );
           }
           return;
         }
