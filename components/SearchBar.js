@@ -17,11 +17,11 @@ export default function SearchBar(props) {
     }
 
     (async () => {
-      const response = await axios.get("/api/getCourses");
-      const courses = response.data.courses;
+      const response = await axios.get("/api/getSearchBarData");
+      const opt = response.data.data;
 
       if (active) {
-        setOptions(courses);
+        setOptions(opt);
       }
     })();
 
@@ -48,11 +48,9 @@ export default function SearchBar(props) {
         setOpen(false);
       }}
       getOptionSelected={(option, value) =>
-        option.Title === value.Title || option.SubjectCode === value.SubjectCode
+        option.title === value.title || option.instructor === value.instructor
       }
-      getOptionLabel={option =>
-        option.SubjectCode + "-R" + option.Regulation + ": " + option.Title
-      }
+      getOptionLabel={option => option.title + "(" + option.instructor + ")" }
       options={options}
       loading={loading}
       renderInput={params => (

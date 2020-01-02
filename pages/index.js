@@ -1,5 +1,8 @@
 import App from "../components/App.js";
 import ClassCard from "../components/ClassCard.js";
+import CourseClassSites from "../components/CourseClassSites.js";
+import CircularProgress from "@material-ui/core/CircularProgress";
+
 
 import axios from "axios";
 
@@ -26,10 +29,70 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function PublicPage() {
+  const date = new Date();
+  const currentYear = date.getFullYear();
+  const season = date.getMonth() < 6 ? "Spring" : "Fall"; // Semester pattern.
+  const loader = (
+         <Paper
+        square
+	style={{
+          minHeight: "300px",
+          height: "100%",
+          width: "100%"
+        }}
+      >
+  
+	  <Grid
+          container
+          spacing={0}
+          alignItems="center"
+          justify="center"
+          direction="column"
+          style={{ minHeight: "300px" }}
+  >
+      <CircularProgress style={{ color: "black" }} /> 
+          <Grid item>
+          </Grid>
+  </Grid> 
+  </Paper>
+  
+  );
   const [classSiteYear, setClassSiteYear] = React.useState("");
   const [classSites, setClassSites] = React.useState([]);
   const [resultLoading, setResultLoading] = React.useState(false);
-  const [results, setResults] = React.useState([]);
+  const [results, setResults] = React.useState((
+        <Paper
+        square
+        style={{
+          backgroundPosition: "center",
+          backgroundImage: `url(${"classroom.jpg"})`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+          minHeight: "300px",
+          height: "100%",
+          width: "100%"
+        }}
+      >
+  
+	  <Grid
+          container
+          spacing={0}
+          alignItems="center"
+          justify="center"
+          direction="column"
+          style={{ minHeight: "300px" }}
+        >
+          <Grid item>
+            <Typography
+              variant="h1"
+              style={{ color: "#000000" }}
+            >
+              {season} / {currentYear}
+            </Typography>
+          </Grid>
+  </Grid> 
+  </Paper>
+  ));
 
   React.useEffect(() => {
     axios.get("/api/getAcademicYear").then(({ data }) => {
@@ -53,12 +116,20 @@ function PublicPage() {
   }, []);
 
   const handleClick = cl => {
-    alert(cl);
+	setResultLoading(true);
+	axios.get('/api/getCourseClasses',{
+		params: {
+    course: cl,
+  }})
+		  .then(({data}) => {
+			  if(data.error){
+				  setResultLoading(false);
+			  }
+			  setResults(
+	      <CourseClassSites data={data.data}/>);
+			  setResultLoading(false);
+		  });
   };
-
-  const date = new Date();
-  const currentYear = date.getFullYear();
-  const season = date.getMonth() < 6 ? "Spring" : "Fall"; // Semester pattern.
 
   let render = (
     <div>
@@ -84,37 +155,8 @@ function PublicPage() {
         </div>
       </Paper>
       <br />
-      <Paper
-        square
-        style={{
-          backgroundPosition: "center",
-          backgroundImage: `url(${"classroom.jpg"})`,
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-          minHeight: "300px",
-          height: "100%",
-          width: "100%"
-        }}
-      >
-        <Grid
-          container
-          spacing={0}
-          align="center"
-          justify="center"
-          direction="column"
-          style={{ minHeigh: "300px" }}
-        >
-          <Grid item>
-            <Typography
-              variant="h1"
-              style={{ marginTop: "100px", color: "#000000" }}
-            >
-              {season} / {currentYear}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Paper>
-    </div>
+      {resultLoading ? loader : results}
+   </div>
   );
   return <App userLogged={false} payload={render} />;
 }

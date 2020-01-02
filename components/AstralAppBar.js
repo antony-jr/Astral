@@ -297,7 +297,7 @@ export default function AstralAppBar(props) {
                 <div className={classes.searchIcon}>
                   <SearchIcon />
                 </div>
-                <SearchBar />
+		<SearchBar onChange={(e, value)=> {window.location.href = value.location;} }/>
               </div>
             </Grid>
             {options}
