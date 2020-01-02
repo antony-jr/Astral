@@ -3,7 +3,6 @@ import ClassCard from "../components/ClassCard.js";
 import CourseClassSites from "../components/CourseClassSites.js";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-
 import axios from "axios";
 
 import {
@@ -33,66 +32,59 @@ function PublicPage() {
   const currentYear = date.getFullYear();
   const season = date.getMonth() < 6 ? "Spring" : "Fall"; // Semester pattern.
   const loader = (
-         <Paper
-        square
-	style={{
-          minHeight: "300px",
-          height: "100%",
-          width: "100%"
-        }}
+    <Paper
+      square
+      style={{
+        minHeight: "300px",
+        height: "100%",
+        width: "100%"
+      }}
+    >
+      <Grid
+        container
+        spacing={0}
+        alignItems="center"
+        justify="center"
+        direction="column"
+        style={{ minHeight: "300px" }}
       >
-  
-	  <Grid
-          container
-          spacing={0}
-          alignItems="center"
-          justify="center"
-          direction="column"
-          style={{ minHeight: "300px" }}
-  >
-      <CircularProgress style={{ color: "black" }} /> 
-          <Grid item>
-          </Grid>
-  </Grid> 
-  </Paper>
-  
+        <CircularProgress style={{ color: "black" }} />
+        <Grid item></Grid>
+      </Grid>
+    </Paper>
   );
   const [classSiteYear, setClassSiteYear] = React.useState("");
   const [classSites, setClassSites] = React.useState([]);
   const [resultLoading, setResultLoading] = React.useState(false);
-  const [results, setResults] = React.useState((
-        <Paper
-        square
-        style={{
-          backgroundPosition: "center",
-          backgroundImage: `url(${"classroom.jpg"})`,
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-          minHeight: "300px",
-          height: "100%",
-          width: "100%"
-        }}
+  const [results, setResults] = React.useState(
+    <Paper
+      square
+      style={{
+        backgroundPosition: "center",
+        backgroundImage: `url(${"classroom.jpg"})`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        minHeight: "300px",
+        height: "100%",
+        width: "100%"
+      }}
+    >
+      <Grid
+        container
+        spacing={0}
+        alignItems="center"
+        justify="center"
+        direction="column"
+        style={{ minHeight: "300px" }}
       >
-  
-	  <Grid
-          container
-          spacing={0}
-          alignItems="center"
-          justify="center"
-          direction="column"
-          style={{ minHeight: "300px" }}
-        >
-          <Grid item>
-            <Typography
-              variant="h1"
-              style={{ color: "#000000" }}
-            >
-              {season} / {currentYear}
-            </Typography>
-          </Grid>
-  </Grid> 
-  </Paper>
-  ));
+        <Grid item>
+          <Typography variant="h1" style={{ color: "#000000" }}>
+            {season} / {currentYear}
+          </Typography>
+        </Grid>
+      </Grid>
+    </Paper>
+  );
 
   React.useEffect(() => {
     axios.get("/api/getAcademicYear").then(({ data }) => {
@@ -116,19 +108,20 @@ function PublicPage() {
   }, []);
 
   const handleClick = cl => {
-	setResultLoading(true);
-	axios.get('/api/getCourseClasses',{
-		params: {
-    course: cl,
-  }})
-		  .then(({data}) => {
-			  if(data.error){
-				  setResultLoading(false);
-			  }
-			  setResults(
-	      <CourseClassSites data={data.data}/>);
-			  setResultLoading(false);
-		  });
+    setResultLoading(true);
+    axios
+      .get("/api/getCourseClasses", {
+        params: {
+          course: cl
+        }
+      })
+      .then(({ data }) => {
+        if (data.error) {
+          setResultLoading(false);
+        }
+        setResults(<CourseClassSites data={data.data} />);
+        setResultLoading(false);
+      });
   };
 
   let render = (
@@ -156,7 +149,7 @@ function PublicPage() {
       </Paper>
       <br />
       {resultLoading ? loader : results}
-   </div>
+    </div>
   );
   return <App userLogged={false} payload={render} />;
 }

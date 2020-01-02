@@ -50,7 +50,7 @@ export default function SearchBar(props) {
       getOptionSelected={(option, value) =>
         option.title === value.title || option.instructor === value.instructor
       }
-      getOptionLabel={option => option.title + "(" + option.instructor + ")" }
+      getOptionLabel={option => option.title + "(" + option.instructor + ")"}
       options={options}
       loading={loading}
       renderInput={params => (
