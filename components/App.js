@@ -22,7 +22,7 @@ class App extends React.Component {
         <div>
           <Head>
             <title>Astral | Course Mangement System</title>
-            <link rel="icon" type="image/x-icon" href="logo_sm.png" />
+	    <link rel="icon" type="image/x-icon" href="/logo_sm.png" />
           </Head>
           <PageLoader />
         </div>
@@ -33,7 +33,7 @@ class App extends React.Component {
         <SnackbarProvider maxSnack={3}>
           <Head>
             <title>Astral | Course Mangement System</title>
-            <link rel="icon" type="image/x-icon" href="logo_sm.png" />
+	    <link rel="icon" type="image/x-icon" href="/logo_sm.png" />
           </Head>
           <style jsx global>{`
             body {
