@@ -18,6 +18,12 @@ export default function SearchBar(props) {
 
     (async () => {
       const response = await axios.get("/api/getSearchBarData");
+      if(response.data.error){
+	      if(active){
+		      setOptions([]);
+	      }
+	      return;
+      }
       const opt = response.data.data;
 
       if (active) {

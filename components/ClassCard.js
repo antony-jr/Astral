@@ -9,7 +9,7 @@ import Box from "@material-ui/core/Box";
 
 const useStyles = makeStyles({
   card: {
-    minWidth: 300,
+    minWidth: 100,
     maxWidth: 300
   },
   title: {

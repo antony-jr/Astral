@@ -6,6 +6,14 @@ import PageLoader from "./PageLoader.js";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 import { SnackbarProvider } from "notistack";
+import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/core';
+
+
+const MyFont = createMuiTheme();
+const MyFontTheme = responsiveFontSizes(MyFont);
+
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -30,7 +38,9 @@ class App extends React.Component {
     }
     return (
       <div>
-        <SnackbarProvider maxSnack={3}>
+        <ThemeProvider theme={MyFontTheme} >
+ 
+	      <SnackbarProvider maxSnack={3}>
           <Head>
             <title>Astral | Course Mangement System</title>
 	    <link rel="icon" type="image/x-icon" href="/logo_sm.png" />
@@ -39,7 +49,8 @@ class App extends React.Component {
             body {
               background: #fafafa;
             }
-          `}</style>
+	  `}</style>
+
           <Grid
             container
             direction="column"
@@ -55,7 +66,8 @@ class App extends React.Component {
             </Container>
           </Grid>
         </SnackbarProvider>
-      </div>
+</ThemeProvider>
+</div>
     );
   }
 }

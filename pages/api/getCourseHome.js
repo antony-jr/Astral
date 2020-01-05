@@ -4,6 +4,18 @@ var getConnection = require("../../lib/getConnection.js");
 
 const handler = (req, res) => {
   res.setHeader("Content-Type", "application/json");
+  var keys = []
+  for (var i in req.query) {
+	  keys.push(i);
+  }
+
+  if(keys.length != 1){
+	  res.statusCode = 200;
+	  res.end(JSON.stringify({error: true, reason: "invalid get query sent"}));
+	  return;
+  }
+  const ClassID = keys[0];
+
   getConnection((err, con) => {
     if (err) {
       res.statusCode = 200;
@@ -12,7 +24,7 @@ const handler = (req, res) => {
       );
       return;
     }
-    con.query("SELECT * FROM ClassSites;", (error, results, fields) => {
+    con.query("SELECT * FROM ClassSites WHERE ClassID='" + ClassID + "';", (error, results, fields) => {
       if (error) {
         con.release();
         res.statusCode = 200;
@@ -25,23 +37,21 @@ const handler = (req, res) => {
         res.statusCode = 200;
         res.end(
           JSON.stringify({
-            error: false,
-            data: []
+            error: true,
+            reason: "no such class"
           })
         );
         return;
       }
 
-      const reqDatas = [];
-      results.map((result, iteration) => {
-        con.query(
-          "SELECT * FROM Courses WHERE CourseID = '" +
-            result["CourseID"] +
-            "';",
+      con.query(
+          "SELECT * FROM Courses WHERE CourseID = '" + results["CourseID"] + "';",
           (e, r, f) => {
             if (e) {
               con.release();
-              return;
+	      res.statusCode = 200;
+	      res.end(JSON.stringify({error: true, reason: "sql query failed"}));
+	      return;
             }
 
             con.query(
@@ -67,23 +77,15 @@ const handler = (req, res) => {
                   instructor: R[0]["LegalName"],
                   location: result["ClassPage"]
                 };
-                reqDatas.push(reqData);
 
-                // A little hackaround to avoid using the data before the map
-                // finishes.
-                if (iteration + 1 == results.length) {
                   con.release();
                   res.statusCode = 200;
                   res.end(JSON.stringify({ error: false, data: reqDatas }));
                   return;
-                }
-              }
-            );
-          }
-        );
+              });
+          });
       });
     });
-  });
 };
 
 export default withSession(handler);

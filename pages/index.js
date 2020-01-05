@@ -2,7 +2,6 @@ import App from "../components/App.js";
 import ClassCard from "../components/ClassCard.js";
 import CourseClassSites from "../components/CourseClassSites.js";
 import CircularProgress from "@material-ui/core/CircularProgress";
-
 import axios from "axios";
 
 import {
@@ -77,20 +76,21 @@ function PublicPage() {
         direction="column"
         style={{ minHeight: "300px" }}
       >
-        <Grid item>
+	      <Grid item>
+ 
           <Typography variant="h1" style={{ color: "#000000" }}>
             {season} / {currentYear}
           </Typography>
-        </Grid>
+  </Grid>
       </Grid>
     </Paper>
   );
-
+	
   React.useEffect(() => {
     axios.get("/api/getAcademicYear").then(({ data }) => {
       if (data.error) {
         setClassSiteYear("Unknown");
-        console.log(data);
+	console.log(data);
       } else {
         setClassSiteYear(
           data.fromAcademicYear.toString() +

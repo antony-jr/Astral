@@ -4,7 +4,6 @@ const handler = (req, res) => {
   res.setHeader("Content-Type", "application/json");
   getConnection((err, con) => {
     if (err) {
-      con.release();
       res.statusCode = 200;
       res.end(
         JSON.stringify({ error: true, reason: "cannot connect to database" })
