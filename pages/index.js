@@ -60,7 +60,7 @@ function PublicPage() {
       square
       style={{
         backgroundPosition: "center",
-        backgroundImage: `url(${"classroom.jpg"})`,
+        backgroundImage: `url(${"/classroom.jpg"})`,
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
         minHeight: "300px",
@@ -78,7 +78,7 @@ function PublicPage() {
       >
 	      <Grid item>
  
-          <Typography variant="h1" style={{ color: "#000000" }}>
+          <Typography align="center" variant="h1" style={{ color: "#000000" }}>
             {season} / {currentYear}
           </Typography>
   </Grid>
@@ -137,7 +137,7 @@ function PublicPage() {
           {classSites.map((cl, i) => (
             <Chip
               label={cl}
-              style={{ marginLeft: "10px" }}
+              style={{ marginLeft: "10px" , marginTop: "10px", marginBottom: "10px" }}
               onClick={() => {
                 handleClick(cl);
               }}
