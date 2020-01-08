@@ -97,10 +97,18 @@ function ClassSite() {
 				science such as Graphs,Trees,Arrays,Disjoint sets and much more.
 			</Typography>
 			<br />
-			<Tabs  indicatorColor="secondary" value={tabValue} onChange={handleTabClick}
-			textColor="" style={{color: 'white'}}>
+			<Tabs  
+			indicatorColor="secondary" 
+			value={tabValue} 
+			onChange={handleTabClick}
+			variant="scrollable"
+          		scrollButtons="auto"
+			textColor="" 
+			style={{color: 'white'}}>
 			<Tab label="Course Home"/>
 			<Tab label="Homework"/>
+			<Tab label="Materials"/>
+			<Tab label="Information"/>
 		        </Tabs>
 			</Container>
 		</Paper>
