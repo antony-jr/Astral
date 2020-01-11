@@ -82,6 +82,8 @@ export default function UserSettings(props) {
   const [year, setYear] = React.useState(0);
   const [season, setSeason] = React.useState("");
   const [userIncharge, setUserIncharge] = React.useState("");
+  const [lecture, setLecture] = React.useState("");
+  const [timings, setTimings] = React.useState("");
 
   // variant could be success, error, warning, info, or default
   // enqueueSnackbar('This is a success message!', { variant });
@@ -108,11 +110,21 @@ export default function UserSettings(props) {
     setUserIncharge(value.UserID);
   };
 
+  const handleLectureChange = e => {
+    setLecture(e.target.value);
+  };
+
+  const handleTimingsChange = e => {
+    setTimings(e.target.value);
+  };
+
   const handleAddClassSite = () => {
     setCourseID("");
     setYear("");
     setSeason("");
     setUserIncharge("");
+    setLecture("");
+    setTimings("");
     setOpenDialog(true);
   };
 
@@ -159,6 +171,9 @@ export default function UserSettings(props) {
     sendData.append("Year", year);
     sendData.append("Season", season);
     sendData.append("UserIncharge", userIncharge);
+    sendData.append("Lecture", lecture);
+    sendData.append("Timings", timings);
+
     axios.post("/api/addClassSite", sendData).then(({ data }) => {
       if (data.error) {
         console.log(data.reason);
@@ -269,6 +284,38 @@ export default function UserSettings(props) {
             fullWidth
             value={season}
             onChange={handleSeasonChange}
+            onKeyPress={ev => {
+              if (ev.key == "Enter") {
+                submitAddClassSite();
+                ev.preventDefault();
+              }
+            }}
+          />
+          <TextField
+            error={error}
+            margin="dense"
+            id="lecture"
+            label="Lecture"
+            type="text"
+            fullWidth
+            value={lecture}
+            onChange={handleLectureChange}
+            onKeyPress={ev => {
+              if (ev.key == "Enter") {
+                submitAddClassSite();
+                ev.preventDefault();
+              }
+            }}
+          />
+          <TextField
+            error={error}
+            margin="dense"
+            id="timings"
+            label="Timings"
+            type="text"
+            fullWidth
+            value={timings}
+            onChange={handleTimingsChange}
             onKeyPress={ev => {
               if (ev.key == "Enter") {
                 submitAddClassSite();

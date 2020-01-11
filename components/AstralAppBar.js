@@ -285,8 +285,8 @@ export default function AstralAppBar(props) {
       <HideOnScroll {...props}>
         <AppBar position="fixed" className={classes.appBar}>
           <Toolbar>
-	   <img src="/logo_white.png" alt="logo" className={classes.logo} />
-	    <img src="/logo_sm.png" alt="logo" className={classes.logoSm} />
+            <img src="/logo_white.png" alt="logo" className={classes.logo} />
+            <img src="/logo_sm.png" alt="logo" className={classes.logoSm} />
             <Grid
               container
               direction="row"

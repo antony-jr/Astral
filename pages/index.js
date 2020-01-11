@@ -76,21 +76,20 @@ function PublicPage() {
         direction="column"
         style={{ minHeight: "300px" }}
       >
-	      <Grid item>
- 
+        <Grid item>
           <Typography align="center" variant="h1" style={{ color: "#000000" }}>
             {season} / {currentYear}
           </Typography>
-  </Grid>
+        </Grid>
       </Grid>
     </Paper>
   );
-	
+
   React.useEffect(() => {
     axios.get("/api/getAcademicYear").then(({ data }) => {
       if (data.error) {
         setClassSiteYear("Unknown");
-	console.log(data);
+        console.log(data);
       } else {
         setClassSiteYear(
           data.fromAcademicYear.toString() +
@@ -137,7 +136,11 @@ function PublicPage() {
           {classSites.map((cl, i) => (
             <Chip
               label={cl}
-              style={{ marginLeft: "10px" , marginTop: "10px", marginBottom: "10px" }}
+              style={{
+                marginLeft: "10px",
+                marginTop: "10px",
+                marginBottom: "10px"
+              }}
               onClick={() => {
                 handleClick(cl);
               }}

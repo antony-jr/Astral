@@ -2,7 +2,6 @@ import { withSession } from "next-session";
 import siteConfig from "../../siteConfig.json";
 
 var getConnection = require("../../lib/getConnection.js");
-var crypto = require("crypto");
 
 const handler = (req, res) => {
   res.setHeader("Content-Type", "application/json");
@@ -14,27 +13,20 @@ const handler = (req, res) => {
     return;
   }
 
-  if (!req.session.userLogged || !req.session.username == "administrator") {
+  if (!req.session.userLogged) {
     res.statusCode = 200;
     res.end(
       JSON.stringify({
         error: false,
-        reason: "connection is not authenticated as the administrator"
+        reason: "connection is not authenticated"
       })
     );
     return;
   }
 
-  const { CourseID, Year, Season, UserIncharge, Lecture, Timings } = req.body;
+  const { ClassID, MsgID } = req.body;
 
-  if (
-    typeof CourseID == "string" &&
-    typeof Year == "string" &&
-    typeof Season == "string" &&
-    typeof UserIncharge == "string" &&
-    typeof Lecture == "string" &&
-    typeof Timings == "string"
-  ) {
+  if (typeof ClassID == "string" && typeof MsgID == "string") {
     getConnection((err, con) => {
       if (err) {
         res.statusCode = 200;
@@ -43,13 +35,6 @@ const handler = (req, res) => {
         );
         return;
       }
-
-      const ClassID = crypto
-        .createHash("md5")
-        .update(CourseID + Year + Season + UserIncharge)
-        .digest("hex");
-
-      const ClassPage = "/class/" + ClassID;
 
       con.query(
         "SELECT * FROM ClassSites WHERE ClassID='" + ClassID + "';",
@@ -64,25 +49,27 @@ const handler = (req, res) => {
           }
 
           if (results.length == 0) {
-            // Implies there is no class collision.
+            con.release();
+            res.end(
+              JSON.stringify({
+                error: true,
+                reason: "no such class"
+              })
+            );
+          } else {
+            if (results[0]["UserIncharge"] != req.session.username) {
+              con.release();
+              res.end(
+                JSON.stringify({
+                  error: true,
+                  reason: "user not assigned to class"
+                })
+              );
+              return;
+            }
+
             con.query(
-              "INSERT INTO `ClassSites` VALUES ('" +
-                ClassID +
-                "', '" +
-                CourseID +
-                "', '" +
-                Year +
-                "', '" +
-                Season +
-                "', '" +
-                ClassPage +
-                "', '" +
-                UserIncharge +
-                "', '" +
-                Lecture +
-                "', '" +
-                Timings +
-                "');",
+              "DELETE FROM `Announcements` WHERE MsgID='" + MsgID + "';",
               (e, r, f) => {
                 if (e) {
                   con.release();
@@ -92,20 +79,12 @@ const handler = (req, res) => {
                   );
                   return;
                 }
+
                 con.release();
                 res.statusCode = 200;
-                res.end(JSON.stringify({ error: false, creation: "success" }));
+                res.end(JSON.stringify({ error: false, removal: "success" }));
                 return;
               }
-            );
-          } else {
-            con.release();
-            res.end(
-              JSON.stringify({
-                error: false,
-                creation: "failed",
-                reason: "class already exists"
-              })
             );
           }
           return;

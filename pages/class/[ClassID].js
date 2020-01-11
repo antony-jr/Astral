@@ -4,6 +4,9 @@ import { useRouter } from 'next/router';
 
 import App from '../../components/App.js';
 
+// Content for tabs
+import ClassHome from '../../components/ClassHome.js';
+
 import {
 	Typography,
 	Divider,
@@ -62,7 +65,7 @@ function a11yProps(index) {
   };
 }
 
-function ClassSite() {
+function ClassSite(props) {
 	const router = useRouter();
 	const classes = useStyles();
   	const bull = <span className={classes.bullet}>•</span>;
@@ -71,30 +74,49 @@ function ClassSite() {
 					userLogged: false,
 		username: ''});
 	const size = useWindowSize();
-	
+	const [tabContent, setTabContent] = React.useState(null);
+	const [classInfo, setClassInfo] = React.useState({});
+
 	React.useEffect(() => {
 		axios.get("/api/getSession").then(({ data }) => {
 			setSession(data);
-		});
-	}, []);
+			axios.get("/api/getClassSiteInfo?" + router.query.ClassID).then(({ data }) => {
+			setClassInfo(data);
+			setTabContent(
+				<ClassHome 
+					ClassID={router.query.ClassID}/>
+			);
+			});
 
+		});
+	}, [router]);
 	const handleTabClick = (event, value) => {
 		setTabValue(value);
+		console.log(value);
+		switch(value){
+			case 0:
+				setTabContent(<ClassHome ClassID={router.query.ClassID}/>);
+				break;
+			default:
+				setTabContent(null);
+				break;
+		}
+	
 	}
 
 	let render = (
+		<React.Fragment>
 		<Paper elevation={5} square className={classes.headPaper}>
 			<Container width="lg">
 			<br />
 			<Typography className={classes.headText} variant={size.width <= 400 ? "h5" : "h4"}>
-				<b>CS8391</b> {bull} Data Structures {bull} <b>R17</b>
+				<b>{classInfo.subject_code}</b> {bull} {classInfo.title} {bull} <b>R{classInfo.regulation}</b>
 			</Typography> 
 			<Typography className={classes.headText} variant={size.width <= 400 ? "h6" : "h5"}>
-				<b>Fall / 2020</b>
+				<b>{classInfo.season} / {classInfo.year}</b>
 			</Typography>
 			<Typography className={classes.headText} variant="body2" >
-				This course explores various fundamental data structures presend in computer
-				science such as Graphs,Trees,Arrays,Disjoint sets and much more.
+				{classInfo.description}
 			</Typography>
 			<br />
 			<Tabs  
@@ -103,20 +125,19 @@ function ClassSite() {
 			onChange={handleTabClick}
 			variant="scrollable"
           		scrollButtons="auto"
-			textColor="" 
 			style={{color: 'white'}}>
-			<Tab label="Course Home"/>
+			<Tab label="Class Home"/>
 			<Tab label="Homework"/>
 			<Tab label="Materials"/>
-			<Tab label="Information"/>
-		        </Tabs>
+			<Tab label="Lecture Notes"/>
+			</Tabs>
 			</Container>
 		</Paper>
+		{tabContent}
+	</React.Fragment>	
 	);
 	
 	return <App userLogged={session.userLogged} username={session.username} payload={render} />
 }
 
-export default function Page(){
-	return <ClassSite />;
-}
+export default ClassSite;

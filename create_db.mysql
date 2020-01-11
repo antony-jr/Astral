@@ -24,7 +24,9 @@ CREATE TABLE IF NOT EXISTS ClassSites (
         Season varchar(10) NOT NULL,
         ClassPage varchar(100),
         UserIncharge varchar(50),
-        PRIMARY KEY (ClassID)
+	Lecture varchar(100),
+	Timings varchar(100),
+	PRIMARY KEY (ClassID)
 );
 
 -- We need a table to store all announcements
@@ -33,6 +35,7 @@ CREATE TABLE IF NOT EXISTS Announcements (
         MsgID varchar(32) NOT NULL,  /* MD5 sum of timestamp and classid */
 	Msg varchar(200),
         MsgTimeStamp timestamp NOT NULL,
+	Author varchar(100)
         PRIMARY KEY (MsgID)
 );
 
