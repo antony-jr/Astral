@@ -40,7 +40,7 @@ const handler = (req, res) => {
       const timestamp = new Date().toString();
       const MessageID = crypto
         .createHash("md5")
-        .update(Message + timestamp)
+        .update(ClassID + timestamp)
         .digest("hex");
 
       con.query(

@@ -24,9 +24,9 @@ const handler = (req, res) => {
     return;
   }
 
-  const { ClassID, MsgID } = req.body;
+  const { ClassID, HomeworkID } = req.body;
 
-  if (typeof ClassID == "string" && typeof MsgID == "string") {
+  if (typeof ClassID == "string" && typeof HomeworkID == "string") {
     getConnection((err, con) => {
       if (err) {
         res.statusCode = 200;
@@ -69,7 +69,7 @@ const handler = (req, res) => {
             }
 
             con.query(
-              "DELETE FROM `Announcements` WHERE MsgID='" + MsgID + "' and ClassID='" + ClassID + "';",
+              "DELETE FROM `Homeworks` WHERE HomeworkID='" + HomeworkID + "' and ClassID='" + ClassID + "';",
               (e, r, f) => {
                 if (e) {
                   con.release();

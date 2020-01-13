@@ -2,6 +2,7 @@ import { withSession } from "next-session";
 import siteConfig from "../../siteConfig.json";
 
 var getConnection = require("../../lib/getConnection.js");
+var crypto = require("crypto");
 
 const handler = (req, res) => {
   res.setHeader("Content-Type", "application/json");
@@ -24,9 +25,13 @@ const handler = (req, res) => {
     return;
   }
 
-  const { ClassID, MsgID } = req.body;
+  const { ClassID, Title, Description, Deadline } = req.body;
 
-  if (typeof ClassID == "string" && typeof MsgID == "string") {
+   if (typeof ClassID == "string" && 
+       typeof Title == "string" &&
+       typeof Description == "string" &&
+       typeof Deadline == "string"
+    ) {
     getConnection((err, con) => {
       if (err) {
         res.statusCode = 200;
@@ -35,6 +40,12 @@ const handler = (req, res) => {
         );
         return;
       }
+
+      const timestamp = new Date().toString();
+      const HomeworkID = crypto
+        .createHash("md5")
+        .update(ClassID + Title + timestamp + Deadline)
+        .digest("hex");
 
       con.query(
         "SELECT * FROM ClassSites WHERE ClassID='" + ClassID + "';",
@@ -69,7 +80,20 @@ const handler = (req, res) => {
             }
 
             con.query(
-              "DELETE FROM `Announcements` WHERE MsgID='" + MsgID + "' and ClassID='" + ClassID + "';",
+              "INSERT INTO `Homeworks`(ClassID, HomeworkID, HomeworkTitle, HomeworkTimestamp, Author , HomeworkDescription, Deadline) VALUES ('" +
+                ClassID +
+                "', '" +
+                HomeworkID +
+                "', '" +
+                Title +
+                "'," +
+                "current_timestamp(), '" +
+		req.session.legalName +
+		"', '" + 
+		Description +
+	        "', '" +
+		Deadline + 
+                "');",
               (e, r, f) => {
                 if (e) {
                   con.release();
@@ -82,7 +106,7 @@ const handler = (req, res) => {
 
                 con.release();
                 res.statusCode = 200;
-                res.end(JSON.stringify({ error: false, removal: "success" }));
+                res.end(JSON.stringify({ error: false, addition: "success" }));
                 return;
               }
             );

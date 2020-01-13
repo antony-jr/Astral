@@ -17,12 +17,16 @@ export default function(props) {
     }
     return;
   };
+
+  const humanDate = (new Date(props.datetime)).toDateString();
+  const humanTime = (new Date(props.datetime)).toTimeString();
+
   return (
     <Paper square elevation={5} style={{ width: "100%" }}>
       <Container width="lg">
         <br />
         <Typography variant="body2">
-          <b>{props.datetime}</b> by <b>{props.author}</b>
+          <b>{humanDate + " " + humanTime}</b> by <b>{props.author}</b>
           {props.showControl && (
             <IconButton size="sm" onClick={handleBtn} color="secondary">
               <DeleteIcon />
