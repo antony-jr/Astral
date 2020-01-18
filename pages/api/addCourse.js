@@ -1,6 +1,7 @@
 import { withSession } from "next-session";
 import siteConfig from "../../siteConfig.json";
 
+const mysql = require("mysql");
 var getConnection = require("../../lib/getConnection.js");
 var crypto = require("crypto");
 
@@ -61,20 +62,22 @@ const handler = (req, res) => {
 
           if (results.length == 0) {
             // Implies there is no course collision.
-            con.query(
-              "INSERT INTO `Courses` VALUES ('" +
+	    con.query(
+	       "INSERT INTO `Courses`"+
+		"(CourseID,Course,SubjectCode,Regulation,Title,Description,Syllabus) "+
+		"VALUES ('" +
                 CourseID +
-                "', '" +
-                course +
-                "', '" +
-                subjectcode +
                 "', " +
-                regulation +
-                ", '" +
-                title +
-                "', '" +
-                description +
-                "', NULL);",
+                mysql.escape(course) +
+                ", " +
+                mysql.escape(subjectcode) +
+                ", " +
+                mysql.escape(regulation) +
+                ", " +
+                mysql.escape(title) +
+                ", " +
+                mysql.escape(description) +
+                ", NULL);",
               (e, r, f) => {
                 if (e) {
                   con.release();

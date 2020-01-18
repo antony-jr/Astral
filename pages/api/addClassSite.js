@@ -66,7 +66,9 @@ const handler = (req, res) => {
           if (results.length == 0) {
             // Implies there is no class collision.
             con.query(
-              "INSERT INTO `ClassSites` VALUES ('" +
+		"INSERT INTO `ClassSites`"+
+		"(ClassID,CourseID,Year,Season,ClassPage,UserIncharge,Lecture,Timings)"+
+		" VALUES ('" +
                 ClassID +
                 "', '" +
                 CourseID +

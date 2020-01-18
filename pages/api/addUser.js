@@ -82,7 +82,7 @@ const handler = (req, res) => {
           if (results.length == 0) {
             // Implies there is not username collision.
             con.query(
-              "INSERT INTO `Users` VALUES ('" +
+              "INSERT INTO `Users`(UserID, EmailID, PwdHash, LegalName) VALUES ('" +
                 username +
                 "', '" +
                 email +

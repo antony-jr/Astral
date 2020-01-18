@@ -93,7 +93,9 @@ export default function UserSettings(props) {
   }, []);
 
   const handleCourseIDChange = (e, value) => {
-    setCourseID(value.CourseID);
+    if(value){  
+	    setCourseID(value.CourseID);
+    }
   };
 
   const handleYearChange = e => {
@@ -107,7 +109,9 @@ export default function UserSettings(props) {
   };
 
   const handleUserInchargeChange = (e, value) => {
-    setUserIncharge(value.UserID);
+     if(value){
+	     setUserIncharge(value.UserID);
+     }
   };
 
   const handleLectureChange = e => {

@@ -71,6 +71,7 @@ const DialogActions = withStyles(theme => ({
 export default function UserSettings(props) {
   const [openDialog, setOpenDialog] = React.useState(false);
   const [error, setError] = React.useState(false);
+  const [descError, setDescError] = React.useState(false);	
   const [errMsg, setErrMsg] = React.useState("");
   const [data, setData] = React.useState([]);
   const { enqueueSnackbar } = useSnackbar();
@@ -80,7 +81,7 @@ export default function UserSettings(props) {
   const [subjectCode, setSubjectCode] = React.useState("");
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
-
+  
   // variant could be success, error, warning, info, or default
   // enqueueSnackbar('This is a success message!', { variant });
 
@@ -107,7 +108,12 @@ export default function UserSettings(props) {
   };
 
   const handleDescriptionChange = e => {
-    setDescription(e.target.value);
+   setDescription(e.target.value)
+   if(e.target.value.length >= 500){
+	   setDescError(true);
+   }else{
+	   setDescError(false);
+   }
   };
 
   const handleAddCourse = () => {
@@ -160,6 +166,13 @@ export default function UserSettings(props) {
       setError(false);
     }
 
+    if(description.length >= 500){
+	    setDescError(true);
+	    return;
+    }else{
+	    setDescError(false);
+    }
+
     setOpenDialog(false);
     const sendData = new URLSearchParams();
     sendData.append("course", course);
@@ -169,7 +182,7 @@ export default function UserSettings(props) {
     sendData.append("description", description);
     axios.post("/api/addCourse", sendData).then(({ data }) => {
       if (data.error) {
-        enqueueSnackbar("Cannot add course", { variant: "error" });
+        enqueueSnackbar("Cannot add course, "+data.reason, { variant: "error" });
       } else {
         if (data.creation == "success") {
           enqueueSnackbar("Course added", { variant: "success" });
@@ -246,12 +259,6 @@ export default function UserSettings(props) {
             fullWidth
             value={course}
             onChange={handleCourseChange}
-            onKeyPress={ev => {
-              if (ev.key == "Enter") {
-                submitAddCourse();
-                ev.preventDefault();
-              }
-            }}
           />
           <TextField
             error={error}
@@ -262,12 +269,6 @@ export default function UserSettings(props) {
             fullWidth
             value={subjectCode}
             onChange={handleSubjectCodeChange}
-            onKeyPress={ev => {
-              if (ev.key == "Enter") {
-                submitAddCourse();
-                ev.preventDefault();
-              }
-            }}
           />
 
           <TextField
@@ -279,12 +280,6 @@ export default function UserSettings(props) {
             fullWidth
             value={regulation}
             onChange={handleRegulationChange}
-            onKeyPress={ev => {
-              if (ev.key == "Enter") {
-                submitAddCourse();
-                ev.preventDefault();
-              }
-            }}
           />
           <TextField
             error={error}
@@ -295,16 +290,12 @@ export default function UserSettings(props) {
             fullWidth
             value={title}
             onChange={handleTitleChange}
-            onKeyPress={ev => {
-              if (ev.key == "Enter") {
-                submitAddCourse();
-                ev.preventDefault();
-              }
-            }}
           />
 
           <TextField
-            error={error}
+	    multiline
+	    error={error | descError}
+	    helperText="Should not exceed 500 characters"
             margin="dense"
             id="desc"
             label="Description"
@@ -312,12 +303,6 @@ export default function UserSettings(props) {
             fullWidth
             value={description}
             onChange={handleDescriptionChange}
-            onKeyPress={ev => {
-              if (ev.key == "Enter") {
-                submitAddCourse();
-                ev.preventDefault();
-              }
-            }}
           />
         </DialogContent>
         <DialogActions>

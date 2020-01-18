@@ -1,0 +1,239 @@
+-- MariaDB dump 10.17  Distrib 10.4.11-MariaDB, for Linux (x86_64)
+--
+-- Host: localhost    Database: Astral
+-- ------------------------------------------------------
+-- Server version	10.4.11-MariaDB
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `Announcements`
+--
+
+DROP TABLE IF EXISTS `Announcements`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Announcements` (
+  `ClassID` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `MsgID` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Msg` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `MsgTimeStamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `Author` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`MsgID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Announcements`
+--
+
+LOCK TABLES `Announcements` WRITE;
+/*!40000 ALTER TABLE `Announcements` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Announcements` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ClassSites`
+--
+
+DROP TABLE IF EXISTS `ClassSites`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ClassSites` (
+  `ClassID` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `CourseID` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Year` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Season` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ClassPage` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `UserIncharge` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `Lecture` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `Timings` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`ClassID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ClassSites`
+--
+
+LOCK TABLES `ClassSites` WRITE;
+/*!40000 ALTER TABLE `ClassSites` DISABLE KEYS */;
+INSERT INTO `ClassSites` VALUES ('11a97c9b99de40bba7538caadd7f231c','77d53eedf98e8158340ad9bd50bf6907','2020','Spring','/class/11a97c9b99de40bba7538caadd7f231c','eve','Humanities 202','2:30 - 3: 00 PM'),('12a8322c293cd252037315acce80bac7','2088a81d5d43d1d643e138033d610f37','2020','Spring','/class/12a8322c293cd252037315acce80bac7','alice','ECE 213','3:00 - 4:40 PM'),('2ce6a0d2a2313644dc322eb22979b54f','73f297e15fb5a8650686cb4741d89c71','2020','Fall','/class/2ce6a0d2a2313644dc322eb22979b54f','bob','CSE 104','8:10 - 9:00 AM'),('9f3e1006f68421cab03abd2d096904a7','a8a7c5dd103e7f7b76297c39fd83e8c1','2020','Spring','/class/9f3e1006f68421cab03abd2d096904a7','alice','Humanities 101','10: 15 - 10: 40 AM'),('a539cd39684d30e4ade287a21dc900cf','29bb25c81441fe21558b514c51cdf361','2020','Spring','/class/a539cd39684d30e4ade287a21dc900cf','eve','Humanities 009','9:10 - 10:00 AM'),('bd0a62706e391b85185924f23dc3a96f','fe5a69a94059cf1a061804721677bb26','2020','Fall','/class/bd0a62706e391b85185924f23dc3a96f','john','Humanities 001','10:10 - 11: 00 AM'),('e814c55355b465230aa4da4a35abbfca','d72381706b2390dc197d2e20f1b4dba8','2020','Spring','/class/e814c55355b465230aa4da4a35abbfca','bob','Humanities 009','11: 30 AM - 12:20 PM'),('eb6ba4af07d767c8aa4ed3392b70b2e9','f494cebf04a8f94eaad833037b57be3a','2020','Spring','/class/eb6ba4af07d767c8aa4ed3392b70b2e9','john','CSE 204','1:30 PM - 2: 30 PM'),('edbfe6368bacff7202f184561902c725','0314a5b391068d251d5928c5aad2499b','2020','Spring','/class/edbfe6368bacff7202f184561902c725','alice','Humanities 008','8:10 - 9:00 AM');
+/*!40000 ALTER TABLE `ClassSites` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Courses`
+--
+
+DROP TABLE IF EXISTS `Courses`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Courses` (
+  `CourseID` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Course` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `SubjectCode` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Regulation` int(11) NOT NULL,
+  `Title` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `Description` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `Syllabus` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`CourseID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Courses`
+--
+
+LOCK TABLES `Courses` WRITE;
+/*!40000 ALTER TABLE `Courses` DISABLE KEYS */;
+INSERT INTO `Courses` VALUES ('0314a5b391068d251d5928c5aad2499b','GE','GE8152',17,'Engineering Graphics','This course helps to develop in students, graphic skills for communication of concepts, ideas and design of Engineering products.\nTo expose them to existing national standards related to technical drawings.',NULL),('2088a81d5d43d1d643e138033d610f37','BE','BE8255',17,'Basic Electrical, Electronics and Measurement Engineering','This course helps to understand the fundamentals of electronic circuit constructions. To learn the fundamental laws, theorems of electrical circuits and also to analyze them. To study the basic principles of electrical machines and their performance.',NULL),('29bb25c81441fe21558b514c51cdf361','HS','HS8151',17,'Communicative English','This course helps to develop the basic reading and writing skills of first year engineering and technology students. This helps the learners develop their listening skills, which will, enable them listen to lectures and comprehend them by asking questions; seeking clarifications.\nThis course also helps to develop vocabulary of a general kind by developing their reading skills.',NULL),('3519edfd5af8d4954a28538641e6b869','CS','CS8493',17,'Operating Systems','To understand the basic concepts and functions of operating systems. To understand Processes and Threads. To analyze Scheduling algorithms. To understand the concept of Deadlocks.',NULL),('505b9a34ad346d44caeef60362c3e8ac','CS','CS8494',17,'Software Engineering','To understand the phases in a software project. To understand fundamental concepts of requirements engineering and Analysis Modeling. To understand the various software design methodologies.',NULL),('55f25e292e349de3fc3093361964a825','HS','HS8251',17,'Technical English','This course helps to develop strategies and skills to enhance their ability to read comprehend engineering and technology texts. Foster their ability to write convincing job applications and effective reports.\nDevelop their speaking skills to make technical presentations, participate in group discussions.\nStrengthen their listening skill which will help them comprehend lectures and talks in their areas of specialization.',NULL),('6bb4364e84bdb1e02cbaa007b0ff80e9','CS','CS8351',17,'Digital Principles and System Design','To design digital circuits using simplified Boolean functions. To analyze and design combinational circuits. To analyze and design synchronous and asynchronous sequential circuits.',NULL),('73f297e15fb5a8650686cb4741d89c71','MA','MA8551',17,'Algebra and Number Theory','To introduce the basic notions of groups, rings, fields which will then be used to solve related problems. To introduce and apply the concepts of rings, finite fields and polynomials.',NULL),('77d53eedf98e8158340ad9bd50bf6907','PH','PH8252',17,'Physics for Information Science','To understand the essential principles of Physics of semiconductor device and Electron transport properties. Become proficient in magnetic and optical properties of materials and Nano-electronic devices.',NULL),('791a1546555d9bd1ef31ea7c36648d76','MA','MA8251',17,'Engineering Mathematics II','This course is designed to cover topiscs such as Matric Algebra, Vector Calculus, Complex Analysis and Laplace Transform. Matrix Algebra is one of the powerful tools to handle practical problems arising in the field of engineering. Vector calculus can be widely used for modelling the various laws of physics. The various methods of complex analysis and Laplace transforms can be used for efficiently solving the problems that occur in various branches of engineering disciplines.',NULL),('8342cfca4e73e32fc9965ec5c2881164','GE','GE8291',17,'Environmental Science and Engineering','This course is designed to Study the nature and facts about environment. To finding and implementing scientific, technological, economic and political solutions to environmental problems.',NULL),('a3349bf3f73d54b5a8d22c3c4a2b1637','MA','MA8351',17,'Discrete Mathematics','To extend student\'s logical and mathematical maturity and ability to deal with abstraction.',NULL),('a8a7c5dd103e7f7b76297c39fd83e8c1','CY','CY8151',17,'Engineering Chemistry','This course helps to develop an understanding of the basic concepts of phase rule and its applications to single and two component systems and appreciate the purpose and significance of alloys. This course also helps the students conversant with boiler feed water requirements, related problems and water treatment techniques. Principles and generation of energy in batteries, nuclear reactors, solar cells, wind mills and fuel cells.',NULL),('ae700fdb6b0b31fef929f4fdf3c4f1ba','EC','EC8395',17,'Communication Engineering','Introduce the relevance of this course to the existing technology through demonstrations, case studies, simulations, contributions of scientist, national/international policies with a futuristic vision along with socio-economic impact and issues.',NULL),('bcd9a87d26c764dc4a51ec53db6d2cfb','CS','CS8451',17,'Design and Analysis of Algorithms','To understand and apply the algorithm analysis techniques. To critically analyze the efficiency of alternative algorithmic solutions for the same problem. To understand the limitations of Algorithmic power.',NULL),('c59493099b75b08ad7d8ad4b589b2d59','CS','CS8251',17,'Programming in C ','To develop C programs using basic programming constructs. To develop C programs using arrays and strings. To develop applications in C using functions, pointers and structures. To do input/output and file handling in C.',NULL),('d674c0427ecf081a9165c01e31f05dca','CS','CS8391',17,'Data Structures','This course explores fundamental data structures in computer science. It also does extensive analysis on these fundamental structures for better understanding. These structures are also implemented in the C Programming language for practical understanding.',NULL),('d72381706b2390dc197d2e20f1b4dba8','MA','MA8151',17,'Engineering Mathematics I','The goal of this course is to achieve conceptual understanding and to retain the best traditions of traditional calculus. The syllabus is designed to provide the basic tools of calculus mainly for the purpose of modelling the engineering problems mathematically and obtaining solutions.\nThis is a foundation course which mainly deals with topics such as single variable and multivariable calculus and plays an important role in the understanding of science.',NULL),('e272cfb2b97150a8663d77f92398b13d','CS','CS8591',17,'Computer Networks','To understand the protocol layering and physical level communication. To analyze the performance of a network. To understand the various components required  to build different networks.',NULL),('e6cb7004b3eb9e65fd365cb1b3793a3c','CS','CS8492',17,'Database Management Systems','To learn the fundamentals of data models and to represent a database system using ER diagrams. To study SQL and relational database design. To understand the internal storage structures using different file and indexing techniques which will help in physical DB design. To understand the fundamental concepts of transaction processing currency control techniques and recovery procedures.',NULL),('eac9116249f2529cfadc78edba0dfb0b','CS','CS8392',17,'Object Oriented Programming','To understand Object Oriented Programming concepts and basic characteristics of Java. To know the principles of packages, inheritance an interfaces. To define exceptions and use I/O streams. To develop a java application with threads and generics classes.',NULL),('f494cebf04a8f94eaad833037b57be3a','GE','GE8151',17,'Problem Solving and Pythong Programming','This course helps to know the basics of algorithmic problem solving, to read and write simple Python programs, To develop Python programs with conditionals and loops. To Define Python functions and call them.To use Python data structures -- lists, tuples, dictionaries. To do input/output with files in Python.',NULL),('f6c1b349e5f2d5361a61331fea9fa53a','CS','CS8491',17,'Computer Architecture','To learn the basic structure and operations of a computer. To learn the arithmetic and logic unit and implementation of fixed point and floating point arithmetic unit. To learn the basics of pipelined execution.',NULL),('f909470b5a88adcd42f47adb55cbc1c4','MA','MA8402',17,'Probability and Queuing Theory','To provide necessary basic concepts in probability and random processes for applications such as random signals, linear systems in communication engineering.',NULL),('fe5a69a94059cf1a061804721677bb26','PH','PH8151',17,'Engineering Physics','This course is designed to enhance the fundamental knowledge in Physics and applications relevant to various streams of Engineering and technology.',NULL);
+/*!40000 ALTER TABLE `Courses` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Files`
+--
+
+DROP TABLE IF EXISTS `Files`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Files` (
+  `FileID` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `FileName` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `FileTimestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `UserUploaded` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`FileID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Files`
+--
+
+LOCK TABLES `Files` WRITE;
+/*!40000 ALTER TABLE `Files` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Files` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `HomeworkFiles`
+--
+
+DROP TABLE IF EXISTS `HomeworkFiles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `HomeworkFiles` (
+  `HomeworkID` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `HomeworkFileID` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `FileID` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`HomeworkFileID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `HomeworkFiles`
+--
+
+LOCK TABLES `HomeworkFiles` WRITE;
+/*!40000 ALTER TABLE `HomeworkFiles` DISABLE KEYS */;
+/*!40000 ALTER TABLE `HomeworkFiles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Homeworks`
+--
+
+DROP TABLE IF EXISTS `Homeworks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Homeworks` (
+  `ClassID` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `HomeworkID` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `HomeworkTitle` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `HomeworkDescription` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `HomeworkTimestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `Deadline` date NOT NULL,
+  `Author` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`HomeworkID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Homeworks`
+--
+
+LOCK TABLES `Homeworks` WRITE;
+/*!40000 ALTER TABLE `Homeworks` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Homeworks` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `SiteConfig`
+--
+
+DROP TABLE IF EXISTS `SiteConfig`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `SiteConfig` (
+  `ValueKey` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Value` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`ValueKey`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `SiteConfig`
+--
+
+LOCK TABLES `SiteConfig` WRITE;
+/*!40000 ALTER TABLE `SiteConfig` DISABLE KEYS */;
+INSERT INTO `SiteConfig` VALUES ('basicInfo','{\"fromAcademicYear\":\"2020\",\"toAcademicYear\":\"2021\"}');
+/*!40000 ALTER TABLE `SiteConfig` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Users`
+--
+
+DROP TABLE IF EXISTS `Users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Users` (
+  `UserID` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `LegalName` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `EmailID` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `PwdHash` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`UserID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Users`
+--
+
+LOCK TABLES `Users` WRITE;
+/*!40000 ALTER TABLE `Users` DISABLE KEYS */;
+INSERT INTO `Users` VALUES ('administrator','Administrator',NULL,'200ceb26807d6bf99fd6f4f0d1ca54d4'),('alice','Alice Wonder','alice@example.com','6384e2b2184bcbf58eccf10ca7a6563c'),('bob','Bob Alexander','bob@example.com','9f9d51bc70ef21ca5c14f307980a29d8'),('eve','Eve Springer','eve@example.com','fa6a91ef9baa242de0b354a212e8cf82'),('john','John Doe','john@example.com','527bd5b5d689e2c32ae974c6229ff785');
+/*!40000 ALTER TABLE `Users` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2020-01-18 15:56:49

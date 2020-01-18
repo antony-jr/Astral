@@ -2,6 +2,7 @@ import App from "../components/App.js";
 import ClassCard from "../components/ClassCard.js";
 import CourseClassSites from "../components/CourseClassSites.js";
 import CircularProgress from "@material-ui/core/CircularProgress";
+
 import axios from "axios";
 
 import {
@@ -60,7 +61,7 @@ function PublicPage() {
       square
       style={{
         backgroundPosition: "center",
-        backgroundImage: `url(${"/classroom.jpg"})`,
+	backgroundImage: `url(${"/classroom.jpg"})`,
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
         minHeight: "300px",
@@ -76,8 +77,8 @@ function PublicPage() {
         direction="column"
         style={{ minHeight: "300px" }}
       >
-        <Grid item>
-          <Typography align="center" variant="h1" style={{ color: "#000000" }}>
+	   <Grid item>
+	<Typography align="center" variant="h1" style={{ color: "#000000" }}>
             {season} / {currentYear}
           </Typography>
         </Grid>
@@ -136,11 +137,7 @@ function PublicPage() {
           {classSites.map((cl, i) => (
             <Chip
               label={cl}
-              style={{
-                marginLeft: "10px",
-                marginTop: "10px",
-                marginBottom: "10px"
-              }}
+              style={{ marginLeft: "10px", marginTop: "10px", marginBottom: "10px"  }}
               onClick={() => {
                 handleClick(cl);
               }}

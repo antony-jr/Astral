@@ -76,7 +76,7 @@ const handler = (req, res) => {
             }
 
             con.query(
-              "INSERT INTO `Announcements` VALUES ('" +
+              "INSERT INTO `Announcements`(ClassID,MsgID,Msg,MsgTimestamp,Author) VALUES ('" +
                 ClassID +
                 "', '" +
                 MessageID +

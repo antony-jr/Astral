@@ -280,14 +280,21 @@ export default function AstralAppBar(props) {
       </Button>
     );
   }
+
+  const goHome = () => {
+	  if(window){
+		  window.location.href = '/';
+	  }
+  }
+
   return (
     <div>
       <HideOnScroll {...props}>
         <AppBar position="fixed" className={classes.appBar}>
-          <Toolbar>
-            <img src="/logo_white.png" alt="logo" className={classes.logo} />
-            <img src="/logo_sm.png" alt="logo" className={classes.logoSm} />
-            <Grid
+	<Toolbar>
+            <img src="/logo_white.png" alt="logo" className={classes.logo} onClick={goHome}/>
+	    <img src="/logo_sm.png" alt="logo" className={classes.logoSm} onClick={goHome}/>
+	    <Grid
               container
               direction="row"
               justify="center"

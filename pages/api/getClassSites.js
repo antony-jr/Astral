@@ -44,7 +44,6 @@ const handler = (req, res) => {
               );
               return;
             }
-            console.log(r);
             datas.push({
               ClassID: entry["ClassID"],
               CourseID: entry["CourseID"],
