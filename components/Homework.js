@@ -19,7 +19,7 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/Add";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import HomeworkPanel from "./HomeworkPanel.js";
+import HomeworkEntry from "./HomeworkEntry.js"
 
 const useStyles = makeStyles(theme => ({
   margin: {
@@ -42,8 +42,6 @@ export default function Homework(props) {
   const [description, setDescription] = React.useState("");
   const [date, setDate] = React.useState("");
   const { enqueueSnackbar } = useSnackbar();
-  const [currentContent, setCurrentContent] = React.useState(null);
-  const [expanded, setExpanded] = React.useState(false);
   const [session, setSession] = React.useState({
     userLogged: false,
     username: ""
@@ -60,19 +58,6 @@ export default function Homework(props) {
       }, 1000);
     });
   }, []);
-
-  const handleChange = panel => (e, isExpanded) => {
-    var content = null;
-    if (isExpanded) {
-      content = "Selected " + panel;
-    } else {
-      content = null;
-    }
-    setExpanded(isExpanded ? panel : false);
-    setCurrentContent(content);
-  };
-
-
 
   const handleClose = () => {
     setOpen(false);
@@ -205,16 +190,14 @@ export default function Homework(props) {
 	<div>
 	<br/>
 	{information && information.homeworks.map((entry, iter) =>
-	<HomeworkPanel
+	<HomeworkEntry
 	    showControl={information.show_control}
 	    id={entry.HomeworkID}
 	    onDelete={handleDelete}
 	    deadline={entry.Deadline}
 	    heading={entry.HomeworkTitle}
-            expanded={expanded == entry.HomeworkID}
-            onChange={handleChange(entry.HomeworkID)}
-            payload={currentContent}
-           />)
+	    author={entry.Author}
+	 />)
 	}
         </div>
       </div>

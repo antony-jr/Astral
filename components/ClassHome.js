@@ -138,7 +138,20 @@ export default function ClassHome(props) {
   return (
     <React.Fragment>
       <Container style={{ marginTop: "40px" }} width="lg">
-        <Typography variant="body1">
+	 {information && information.show_control && (
+	  <React.Fragment>
+	   <Button 
+	     onClick={handleAddBtn}
+	     style={{width: '100%', marginBottom: '10px'}}
+	     variant="outlined"
+	     color="secondary">
+		New Announcement
+	   </Button>
+	   <Divider style={{marginBottom: '10px'}} orientation="horizontal" />
+	  </React.Fragment>
+          )}
+       
+	<Typography variant="body1">
           Instructor(s): <b>{information && information.instructor}</b>
         </Typography>
         <Typography variant="body1">
@@ -148,24 +161,7 @@ export default function ClassHome(props) {
           Timings: <b>{information && information.timings}</b>
         </Typography>
         <br />
-        <Grid
-          container
-          direction="row"
-          justify="flex-start"
-          alignItems="center"
-        >
-          <Typography variant="h4">Announcements</Typography>
-          {information && information.show_control && (
-            <Fab
-              className={classes.margin}
-              size="small"
-              onClick={handleAddBtn}
-              color="secondary"
-            >
-              <AddIcon />
-            </Fab>
-          )}
-        </Grid>
+        <Typography variant="h4">Announcements</Typography>
         <Divider />
         <Grid
           container
