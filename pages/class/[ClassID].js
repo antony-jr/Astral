@@ -110,33 +110,31 @@ function ClassSite(props) {
 
 	let render = (
 		<React.Fragment>
-		<Paper elevation={5} square className={classes.headPaper}>
 			<Container width="lg">
 			<br />
-			<Typography className={classes.headText} variant={size.width <= 400 ? "h5" : "h4"}>
+			<Typography variant={size.width <= 400 ? "h5" : "h4"}>
 				<b>{classInfo.subject_code}</b> {bull} {classInfo.title} {bull} <b>R{classInfo.regulation}</b>
 			</Typography> 
-			<Typography className={classes.headText} variant={size.width <= 400 ? "h6" : "h5"}>
+			<Typography variant={size.width <= 400 ? "h6" : "h5"}>
 				<b>{classInfo.season} / {classInfo.year}</b>
 			</Typography>
-			<Typography className={classes.headText} variant="body2" >
+			<br />
+			<Typography variant="body2" >
 				{classInfo.description}
 			</Typography>
-			<br />
+			<br /> 
 			<Tabs  
 			indicatorColor="secondary" 
 			value={tabValue} 
 			onChange={handleTabClick}
 			variant="scrollable"
-          		scrollButtons="auto"
-			style={{color: 'white'}}>
+          		scrollButtons="auto">
 			<Tab label="Class Home"/>
 			<Tab label="Homework"/>
 			<Tab label="Materials"/>
 			<Tab label="Lecture Notes"/>
 			</Tabs>
-			</Container>
-		</Paper>
+		</Container>
 		{tabContent}
 	</React.Fragment>	
 	);
