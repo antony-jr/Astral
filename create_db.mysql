@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS Files (
 -- Like professors, administrator and head of department(tentative).
 CREATE TABLE IF NOT EXISTS Users (
         UserID varchar(50) NOT NULL,
-        LegalName varchar(100) NOT NULL,
+        LegalName varchar(100),
         EmailID varchar(50),
         PwdHash varchar(32) NOT NULL,
         PRIMARY KEY (UserID)
