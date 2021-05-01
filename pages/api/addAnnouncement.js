@@ -1,6 +1,7 @@
 import { withSession } from "next-session";
 import siteConfig from "../../siteConfig.json";
 
+const mysql = require("mysql");
 var getConnection = require("../../lib/getConnection.js");
 var crypto = require("crypto");
 
@@ -44,7 +45,8 @@ const handler = (req, res) => {
         .digest("hex");
 
       con.query(
-        "SELECT * FROM ClassSites WHERE ClassID='" + ClassID + "';",
+        "SELECT * FROM ClassSites WHERE ClassID = ?",
+	[ClassID],
         (error, results, fields) => {
           if (error) {
             con.release();
@@ -76,16 +78,8 @@ const handler = (req, res) => {
             }
 
             con.query(
-              "INSERT INTO `Announcements`(ClassID,MsgID,Msg,MsgTimestamp,Author) VALUES ('" +
-                ClassID +
-                "', '" +
-                MessageID +
-                "', '" +
-                Message +
-                "'," +
-                "current_timestamp(), '" +
-                req.session.legalName +
-                "');",
+              "INSERT INTO `Announcements`(ClassID,MsgID,Msg,MsgTimestamp,Author) VALUES (?,?,?,current_timestamp(),?)",
+	       [ClassID,MessageID,Message,req.session.legalName],
               (e, r, f) => {
                 if (e) {
                   con.release();

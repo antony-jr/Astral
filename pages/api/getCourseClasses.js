@@ -1,6 +1,9 @@
 import { withSession } from "next-session";
 
+const mysql = require("mysql");
+
 var getConnection = require("../../lib/getConnection.js");
+
 
 const handler = (req, res) => {
   res.setHeader("Content-Type", "application/json");
@@ -15,7 +18,7 @@ const handler = (req, res) => {
       );
       return;
     }
-    con.query("SELECT * FROM ClassSites;", (error, results, fields) => {
+    con.query("SELECT * FROM ClassSites", (error, results, fields) => {
       if (error) {
         con.release();
         res.statusCode = 200;
@@ -38,9 +41,8 @@ const handler = (req, res) => {
       const reqDatas = [];
       results.map((result, iteration) => {
         con.query(
-          "SELECT * FROM Courses WHERE CourseID = '" +
-            result["CourseID"] +
-            "';",
+          "SELECT * FROM Courses WHERE CourseID = ?",
+          [result["CourseID"]],
           (e, r, f) => {
             if (e) {
               con.release();
@@ -48,9 +50,8 @@ const handler = (req, res) => {
             }
 
             con.query(
-              "SELECT * FROM Users WHERE UserID='" +
-                result["UserIncharge"] +
-                "';",
+              "SELECT * FROM Users WHERE UserID = ?",
+                [result["UserIncharge"]],
               (E, R, F) => {
                 if (E) {
                   con.release();

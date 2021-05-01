@@ -1,5 +1,7 @@
 import { withSession } from "next-session";
 
+const mysql = require("mysql");
+
 var getConnection = require("../../lib/getConnection.js");
 
 const handler = (req, res) => {

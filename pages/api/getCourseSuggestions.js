@@ -1,5 +1,7 @@
 // Used to search all courses from the
 // db.
+const mysql = require("mysql");
+
 var getConnection = require("../../lib/getConnection.js");
 
 export default (req, res) => {

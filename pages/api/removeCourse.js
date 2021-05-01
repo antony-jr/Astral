@@ -1,5 +1,7 @@
 import { withSession } from "next-session";
 
+const mysql = require("mysql");
+
 var getConnection = require("../../lib/getConnection.js");
 var crypto = require("crypto");
 
@@ -49,7 +51,8 @@ const handler = (req, res) => {
       }
 
       con.query(
-        "SELECT * FROM Courses WHERE CourseID='" + CourseID + "';",
+        "SELECT * FROM Courses WHERE CourseID = ?",
+	 [CourseID],
         (error, results, fields) => {
           if (error) {
             con.release();
@@ -63,7 +66,8 @@ const handler = (req, res) => {
           res.statusCode = 200;
           if (results.length == 1) {
             con.query(
-              "DELETE FROM Courses WHERE CourseID='" + CourseID + "';",
+              "DELETE FROM Courses WHERE CourseID = ?",
+	      [CourseID],
               (e, r, f) => {
                 if (e) {
                   con.release();

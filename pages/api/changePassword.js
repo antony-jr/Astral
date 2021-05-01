@@ -1,5 +1,7 @@
 import { withSession } from "next-session";
 
+const mysql = require("mysql");
+
 var getConnection = require("../../lib/getConnection.js");
 var crypto = require("crypto");
 
@@ -39,13 +41,8 @@ const handler = (req, res) => {
           .digest("hex");
 
         con.query(
-          "UPDATE Users SET PwdHash='" +
-            newHash +
-            "' WHERE UserID='" +
-            req.session.username +
-            "' and PwdHash='" +
-            hash +
-            "';",
+          "UPDATE Users SET PwdHash = ? WHERE UserID = ? and PwdHash = ?",
+            [newHash,req.session.username,hash],
           (error, results, fields) => {
             if (error) {
               con.release();
@@ -57,11 +54,8 @@ const handler = (req, res) => {
             }
 
             con.query(
-              "SELECT * FROM Users WHERE UserID='" +
-                req.session.username +
-                "' and PwdHash='" +
-                newHash +
-                "';",
+              "SELECT * FROM Users WHERE UserID = ? and PwdHash = ?",
+              [req.session.username,newHash],
               (e, r, f) => {
                 if (e) {
                   con.release();

@@ -1,6 +1,8 @@
 import { withSession } from "next-session";
 import siteConfig from "../../siteConfig.json";
 
+const mysql = require("mysql");
+
 var getConnection = require("../../lib/getConnection.js");
 var crypto = require("crypto");
 
@@ -48,7 +50,8 @@ const handler = (req, res) => {
         .digest("hex");
 
       con.query(
-        "SELECT * FROM ClassSites WHERE ClassID='" + ClassID + "';",
+        "SELECT * FROM ClassSites WHERE ClassID = ?",
+	 [ClassID],
         (error, results, fields) => {
           if (error) {
             con.release();
@@ -80,20 +83,20 @@ const handler = (req, res) => {
             }
 
             con.query(
-              "INSERT INTO `Homeworks`(ClassID, HomeworkID, HomeworkTitle, HomeworkTimestamp, Author , HomeworkDescription, Deadline) VALUES ('" +
-                ClassID +
-                "', '" +
-                HomeworkID +
-                "', '" +
-                Title +
-                "'," +
-                "current_timestamp(), '" +
-		req.session.legalName +
-		"', '" + 
-		Description +
-	        "', '" +
-		Deadline + 
-                "');",
+              "INSERT INTO `Homeworks`(ClassID, HomeworkID, HomeworkTitle, HomeworkTimestamp, Author , HomeworkDescription, Deadline) VALUES (" +
+                mysql.escape(ClassID) +
+                ", " +
+                mysql.escape(HomeworkID) +
+                ", " +
+                mysql.escape(Title) +
+                ", " +
+                "current_timestamp(), " +
+		mysql.escape(req.session.legalName) +
+		", " + 
+		mysql.escape(Description) +
+	        ", " +
+		mysql.escape(Deadline) + 
+                ");",
               (e, r, f) => {
                 if (e) {
                   con.release();

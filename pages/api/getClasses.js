@@ -1,5 +1,7 @@
 import { withSession } from "next-session";
 
+const mysql = require("mysql");
+
 var getConnection = require("../../lib/getConnection.js");
 
 const handler = (req, res) => {
@@ -31,9 +33,8 @@ const handler = (req, res) => {
         return;
       }
       con.query(
-        "SELECT * FROM ClassSites WHERE UserIncharge ='" +
-          req.session.username +
-          "';",
+        "SELECT * FROM ClassSites WHERE UserIncharge = ?",
+          [req.session.username],
         (error, results, fields) => {
           if (error) {
             con.release();
@@ -59,9 +60,8 @@ const handler = (req, res) => {
           const reqDatas = [];
           results.map((result, iteration) => {
             con.query(
-              "SELECT * FROM Courses WHERE CourseID = '" +
-                result["CourseID"] +
-                "';",
+              "SELECT * FROM Courses WHERE CourseID = ?",
+                [result["CourseID"]],
               (e, r, f) => {
                 if (e) {
                   con.release();

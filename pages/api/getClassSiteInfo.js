@@ -25,7 +25,8 @@ const handler = (req, res) => {
       return;
     }
     con.query(
-      "SELECT * FROM ClassSites WHERE ClassID='" + ClassID + "';",
+      "SELECT * FROM ClassSites WHERE ClassID= ?",
+      [ClassID],
       (error, results, fields) => {
         if (error) {
           con.release();
@@ -47,9 +48,8 @@ const handler = (req, res) => {
         }
 
         con.query(
-          "SELECT * FROM Courses WHERE CourseID = '" +
-            results[0]["CourseID"] +
-            "';",
+          "SELECT * FROM Courses WHERE CourseID = ?",
+           [results[0]["CourseID"]],
           (e, r, f) => {
             if (e) {
               con.release();

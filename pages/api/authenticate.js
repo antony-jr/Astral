@@ -1,5 +1,7 @@
 import { withSession } from "next-session";
 
+const mysql = require("mysql");
+
 var getConnection = require("../../lib/getConnection.js");
 var crypto = require("crypto");
 
@@ -36,11 +38,8 @@ const handler = (req, res) => {
         .update(req.body.password)
         .digest("hex");
       con.query(
-        "SELECT * FROM Users WHERE UserID='" +
-          req.body.username +
-          "' and PwdHash='" +
-          hash +
-          "';",
+        "SELECT * FROM Users WHERE UserID = ? and PwdHash = ?",
+         [req.body.username,hash],
         (error, results, fields) => {
           if (error) {
             con.release();

@@ -1,6 +1,7 @@
 import { withSession } from "next-session";
 import siteConfig from "../../siteConfig.json";
 
+const mysql = require("mysql");
 var getConnection = require("../../lib/getConnection.js");
 var crypto = require("crypto");
 
@@ -52,8 +53,9 @@ const handler = (req, res) => {
       const ClassPage = "/class/" + ClassID;
 
       con.query(
-        "SELECT * FROM ClassSites WHERE ClassID='" + ClassID + "';",
-        (error, results, fields) => {
+        "SELECT * FROM ClassSites WHERE ClassID = ?",
+	 [ClassID],
+         (error, results, fields) => {
           if (error) {
             con.release();
             res.statusCode = 200;
@@ -68,23 +70,8 @@ const handler = (req, res) => {
             con.query(
 		"INSERT INTO `ClassSites`"+
 		"(ClassID,CourseID,Year,Season,ClassPage,UserIncharge,Lecture,Timings)"+
-		" VALUES ('" +
-                ClassID +
-                "', '" +
-                CourseID +
-                "', '" +
-                Year +
-                "', '" +
-                Season +
-                "', '" +
-                ClassPage +
-                "', '" +
-                UserIncharge +
-                "', '" +
-                Lecture +
-                "', '" +
-                Timings +
-                "');",
+		" VALUES (?,?,?,?,?,?,?,?)",
+                [ClassID,CourseID,Year,Season,ClassPage,UserIncharge,Lecture,Timings],
               (e, r, f) => {
                 if (e) {
                   con.release();

@@ -1,5 +1,7 @@
 import { withSession } from "next-session";
 
+const mysql = require("mysql");
+
 var getConnection = require("../../lib/getConnection.js");
 var crypto = require("crypto");
 
@@ -37,7 +39,8 @@ const handler = (req, res) => {
       }
 
       con.query(
-        "SELECT * FROM ClassSites WHERE ClassID='" + ClassID + "';",
+        "SELECT * FROM ClassSites WHERE ClassID = ?",
+	 [ClassID],
         (error, results, fields) => {
           if (error) {
             con.release();
@@ -51,7 +54,8 @@ const handler = (req, res) => {
           res.statusCode = 200;
           if (results.length == 1) {
             con.query(
-              "DELETE FROM ClassSites WHERE ClassID='" + ClassID + "';",
+              "DELETE FROM ClassSites WHERE ClassID = ?",
+	      [ClassID],
               (e, r, f) => {
                 if (e) {
                   con.release();

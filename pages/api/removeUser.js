@@ -1,4 +1,5 @@
 import { withSession } from "next-session";
+const mysql = require("mysql");
 
 var getConnection = require("../../lib/getConnection.js");
 
@@ -47,7 +48,8 @@ const handler = (req, res) => {
       }
 
       con.query(
-        "SELECT * FROM Users WHERE UserID='" + username + "';",
+        "SELECT * FROM Users WHERE UserID = ?",
+	[username],
         (error, results, fields) => {
           if (error) {
             con.release();
@@ -61,7 +63,8 @@ const handler = (req, res) => {
           res.statusCode = 200;
           if (results.length == 1) {
             con.query(
-              "DELETE FROM Users WHERE UserID='" + username + "';",
+              "DELETE FROM Users WHERE UserID = ?",
+		[username],
               (e, r, f) => {
                 if (e) {
                   con.release();

@@ -1,4 +1,5 @@
 var getConnection = require("../../lib/getConnection.js");
+const mysql = require("mysql");
 
 const handler = (req, res) => {
   res.setHeader("Content-Type", "application/json");
@@ -30,7 +31,7 @@ const handler = (req, res) => {
       }
       results.map((entry, iteration) => {
         con.query(
-          "SELECT * FROM Courses WHERE CourseID='" + entry["CourseID"] + "';",
+          "SELECT * FROM Courses WHERE CourseID = " + mysql.escape(entry["CourseID"]),
           (e, r, f) => {
             if (errored) {
               return;

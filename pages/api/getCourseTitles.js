@@ -1,5 +1,7 @@
 // Get only the course titles from the
 // Courses table.
+const mysql = require("mysql");
+
 var getConnection = require("../../lib/getConnection.js");
 
 export default (req, res) => {

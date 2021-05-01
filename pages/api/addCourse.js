@@ -50,7 +50,8 @@ const handler = (req, res) => {
         .digest("hex");
 
       con.query(
-        "SELECT * FROM Courses WHERE CourseID='" + CourseID + "';",
+        "SELECT * FROM Courses WHERE CourseID = ?",
+	 [CourseID],
         (error, results, fields) => {
           if (error) {
             res.statusCode = 200;
@@ -65,9 +66,9 @@ const handler = (req, res) => {
 	    con.query(
 	       "INSERT INTO `Courses`"+
 		"(CourseID,Course,SubjectCode,Regulation,Title,Description,Syllabus) "+
-		"VALUES ('" +
-                CourseID +
-                "', " +
+		"VALUES (" +
+                mysql.escape(CourseID) +
+                ", " +
                 mysql.escape(course) +
                 ", " +
                 mysql.escape(subjectcode) +

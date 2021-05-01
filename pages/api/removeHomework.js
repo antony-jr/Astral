@@ -1,5 +1,6 @@
 import { withSession } from "next-session";
 import siteConfig from "../../siteConfig.json";
+const mysql = require("mysql");
 
 var getConnection = require("../../lib/getConnection.js");
 
@@ -37,7 +38,8 @@ const handler = (req, res) => {
       }
 
       con.query(
-        "SELECT * FROM ClassSites WHERE ClassID='" + ClassID + "';",
+        "SELECT * FROM ClassSites WHERE ClassID = ?",
+	 [ClassID],
         (error, results, fields) => {
           if (error) {
             con.release();
@@ -69,7 +71,8 @@ const handler = (req, res) => {
             }
 
             con.query(
-              "DELETE FROM `Homeworks` WHERE HomeworkID='" + HomeworkID + "' and ClassID='" + ClassID + "';",
+              "DELETE FROM `Homeworks` WHERE HomeworkID = ? and ClassID = ?",
+	       [HomeworkID, ClassID],
               (e, r, f) => {
                 if (e) {
                   con.release();

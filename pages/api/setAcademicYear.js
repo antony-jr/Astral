@@ -1,4 +1,5 @@
 import { withSession } from "next-session";
+const mysql = require("mysql");
 
 var getConnection = require("../../lib/getConnection.js");
 var crypto = require("crypto");
@@ -48,9 +49,9 @@ const handler = (req, res) => {
           res.statusCode = 200;
           if (results.length == 1) {
             con.query(
-              "UPDATE SiteConfig SET Value='" +
-                JSON.stringify(req.body) +
-                "' WHERE ValueKey='basicInfo';",
+              "UPDATE SiteConfig SET Value=" +
+                mysql.escape(JSON.stringify(req.body)) +
+                " WHERE ValueKey='basicInfo';",
               (e, r, f) => {
                 if (e) {
                   con.release();

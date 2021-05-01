@@ -2,6 +2,9 @@
 // db.
 var getConnection = require("../../lib/getConnection.js");
 
+const mysql = require("mysql");
+
+
 export default (req, res) => {
   res.setHeader("Content-Type", "application/json");
   getConnection((err, con) => {
@@ -34,9 +37,8 @@ export default (req, res) => {
       };
       results.map((result, iteration) => {
         con.query(
-          "SELECT Course,Regulation FROM Courses WHERE CourseID='" +
-            result["CourseID"] +
-            "';",
+          "SELECT Course,Regulation FROM Courses WHERE CourseID = ?",
+            [result["CourseID"]],
           (e, r, f) => {
             if (e) {
               con.release();

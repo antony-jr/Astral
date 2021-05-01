@@ -1,5 +1,7 @@
 import { withSession } from "next-session";
 
+const mysql = require("mysql");
+
 var getConnection = require("../../lib/getConnection.js");
 
 const handler = (req, res) => {
@@ -25,7 +27,8 @@ const handler = (req, res) => {
       return;
     }
     con.query(
-      "SELECT * FROM ClassSites WHERE ClassID='" + ClassID + "';",
+      "SELECT * FROM ClassSites WHERE ClassID = ?",
+      [ClassID],
       (error, results, fields) => {
         if (error) {
           con.release();
@@ -59,9 +62,9 @@ const handler = (req, res) => {
               return;
             }
             con.query(
-              "SELECT HomeworkID,HomeworkTitle,Deadline,Author FROM Homeworks WHERE ClassID = '" +
-                ClassID +
-                "' ORDER BY HomeworkTimestamp DESC;",
+              "SELECT HomeworkID,HomeworkTitle,Deadline,Author FROM Homeworks WHERE ClassID = " +
+                mysql.escape(ClassID) +
+                " ORDER BY HomeworkTimestamp DESC;",
               (E, R, F) => {
                 if (E) {
                   con.release();

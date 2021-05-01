@@ -1,6 +1,8 @@
 import { withSession } from "next-session";
 import siteConfig from "../../siteConfig.json";
 
+const mysql = require("mysql");
+
 var getConnection = require("../../lib/getConnection.js");
 var crypto = require("crypto");
 var generator = require("generate-password");
@@ -55,7 +57,8 @@ const handler = (req, res) => {
       }
 
       con.query(
-        "SELECT * FROM Users WHERE UserID='" + username + "';",
+        "SELECT * FROM Users WHERE UserID = ?",
+	[username],
         (error, results, fields) => {
           if (error) {
             con.release();
@@ -82,16 +85,15 @@ const handler = (req, res) => {
           if (results.length == 0) {
             // Implies there is not username collision.
             con.query(
-              "INSERT INTO `Users`(UserID, EmailID, PwdHash, LegalName) VALUES ('" +
-                username +
-                "', '" +
-                email +
-                "', '" +
-                passwordHash +
-                "', " +
-                "'" +
-                legalName +
-                "');",
+              "INSERT INTO `Users`(UserID, EmailID, PwdHash, LegalName) VALUES (" +
+                mysql.escape(username) +
+                ", " +
+                mysql.escape(email) +
+                ", " +
+                mysql.escape(passwordHash) +
+                ", " +
+                mysql.escape(legalName) +
+                ");",
               (e, r, f) => {
                 if (e) {
                   res.statusCode = 200;
