@@ -5,8 +5,8 @@ import { useSnackbar } from "notistack";
 
 import {
   TextField,
-  ExpansionPanelDetails,
-  ExpansionPanelActions,
+  AccordionDetails,
+  AccordionActions,
   Button,
   Typography,
   Box
@@ -72,7 +72,7 @@ export default function GeneralSettings(props) {
 
   return (
     <React.Fragment>
-      <ExpansionPanelDetails container>
+      <AccordionDetails>
         <Box style={{ width: "100%" }} flexDirection="column">
           <TextField
             error={failed}
@@ -107,15 +107,15 @@ export default function GeneralSettings(props) {
             }}
           />
         </Box>
-      </ExpansionPanelDetails>
-      <ExpansionPanelActions>
+      </AccordionDetails>
+      <AccordionActions>
         <Button size="small" onClick={handleReset}>
           Reset
         </Button>
         <Button size="small" color="primary" onClick={handleSave}>
           Save
         </Button>
-      </ExpansionPanelActions>
+      </AccordionActions>
     </React.Fragment>
   );
 }

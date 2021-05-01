@@ -1,6 +1,6 @@
 import {
-  ExpansionPanel,
-  ExpansionPanelSummary,
+  Accordion,
+  AccordionSummary,
   Button,
   Typography
 } from "@material-ui/core";
@@ -23,13 +23,13 @@ const useStyles = makeStyles(theme => ({
 export default function ControlPanel(props) {
   const classes = useStyles();
   return (
-    <ExpansionPanel expanded={props.expanded} onChange={props.onChange}>
-      <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+    <Accordion expanded={props.expanded} onChange={props.onChange}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography className={classes.heading}>
           <b>{props.heading}</b>
         </Typography>
-      </ExpansionPanelSummary>
+      </AccordionSummary>
       {props.expanded && props.payload}
-    </ExpansionPanel>
+    </Accordion>
   );
 }

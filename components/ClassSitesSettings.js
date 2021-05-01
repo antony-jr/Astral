@@ -8,8 +8,8 @@ import { useSnackbar } from "notistack";
 import {
   Dialog,
   IconButton,
-  ExpansionPanelDetails,
-  ExpansionPanelActions,
+  AccordionDetails,
+  AccordionActions,
   Button,
   Typography,
   Box,

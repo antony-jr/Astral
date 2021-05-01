@@ -62,7 +62,6 @@ export default function SearchBar(props) {
       renderInput={params => (
         <TextField
           {...params}
-          color="inherit"
           error={props.error}
           fullWidth
           placeholder="Search"

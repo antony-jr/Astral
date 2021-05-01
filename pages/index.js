@@ -143,7 +143,8 @@ function PublicPage() {
               }}
               clickable
               color="default"
-            />
+              key={i}
+	     />
           ))}
         </div>
       </Paper>
