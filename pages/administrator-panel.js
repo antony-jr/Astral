@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function() {
+function AdministratorPanel() {
   const classes = useStyles();
   const [currentContent, setCurrentContent] = React.useState(null);
   const [expanded, setExpanded] = React.useState(false);
@@ -117,3 +117,6 @@ export default function() {
     />
   );
 }
+
+
+export default AdministratorPanel;
