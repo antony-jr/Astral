@@ -19,7 +19,7 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/Add";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import HomeworkEntry from "./HomeworkEntry.js"
+import MaterialEntry from "./MaterialEntry.js"
 
 const useStyles = makeStyles(theme => ({
   margin: {
@@ -27,20 +27,17 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function Homework(props) {
+export default function Materials(props) {
   const classes = useStyles();
   const [information, setInformation] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [open, setOpen] = React.useState(false);
   const [errorTitle, setErrorTitle] = React.useState(false);
   const [errorDesc, setErrorDesc] = React.useState(false);
-  const [errorDate, setErrorDate] = React.useState(false);
   const [reasonTitle, setReasonTitle] = React.useState("");
   const [reasonDesc, setReasonDesc] = React.useState("");
-  const [reasonDate, setReasonDate] = React.useState("");
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
-  const [date, setDate] = React.useState("");
   const { enqueueSnackbar } = useSnackbar();
   const [session, setSession] = React.useState({
     userLogged: false,
@@ -48,7 +45,7 @@ export default function Homework(props) {
   });
  
   React.useEffect(() => {
-    axios.get("/api/getHomework?" + props.ClassID).then(({ data }) => {
+    axios.get("/api/getMaterials?" + props.ClassID).then(({ data }) => {
       if (data.error) {
         return;
       }
@@ -67,12 +64,6 @@ export default function Homework(props) {
     setTitle(e.target.value);
   };
 
-  const handleDateChange = e => {
-    console.log(e.target.value);	  
-    setDate(e.target.value);
-  };
-
-
   const handleDescriptionChange = e => {
     setDescription(e.target.value);
   };
@@ -81,23 +72,21 @@ export default function Homework(props) {
     resetErrors();
     setTitle('');
     setDescription('');
-    setDate('');
-    setReasonDate('Deadline');
     setOpen(true);
   };
 
   const handleDelete = id => {
     const sendData = new URLSearchParams();
     sendData.append("ClassID", props.ClassID);
-    sendData.append("HomeworkID", id);
-    axios.post("/api/removeHomework", sendData).then(({data}) => {
+    sendData.append("MaterialID", id);
+    axios.post("/api/removeMaterial", sendData).then(({data}) => {
 	    if(data.error){
-	 enqueueSnackbar("Cannot remove homework", {variant: "error"});
+	 enqueueSnackbar("Cannot remove material", {variant: "error"});
 		    return;
 	    }else{
-   	    enqueueSnackbar("Homework removed", { variant: "success" });
+   	    enqueueSnackbar("Material removed", { variant: "success" });
         setLoading(true);
-	        axios.get("/api/getHomework?" + props.ClassID).then(({ data }) => {
+	        axios.get("/api/getMaterials?" + props.ClassID).then(({ data }) => {
       if (data.error) {
         return;
       }
@@ -115,10 +104,9 @@ export default function Homework(props) {
   const resetErrors = () => {
     setErrorTitle(false);
     setErrorDesc(false);
-    setErrorDate(false);
   }
 
-  const handleNewHomework = () => {
+  const handleNewMaterial = () => {
     resetErrors();
     if(title.length == 0){
 	    setErrorTitle(true)
@@ -127,26 +115,21 @@ export default function Homework(props) {
     }else if(description.length == 0){
 	    setErrorDesc(true)
 	    setReasonDesc("Description is required");
-    }else if(date.length == 0){
-	    setErrorDate(true);
-	    setReasonDate("Invalid Date");
-	    console.log(date);
     }
     const sendData = new URLSearchParams();
     sendData.append("ClassID", props.ClassID);
     sendData.append("Title", title);
     sendData.append("Description", description);
-    sendData.append("Deadline", date);
-    axios.post("/api/addHomework", sendData).then(({ data }) => {
+    axios.post("/api/addMaterial", sendData).then(({ data }) => {
 	    if(data.error){
 		    setOpen(false);
 		    console.log(data);
-		    enqueueSnackbar("Cannot add Homework", { variant: "error" });
+		    enqueueSnackbar("Cannot add Material", { variant: "error" });
 	    }else{
 		    setOpen(false);
-        	    enqueueSnackbar("Homework added", { variant: "success" });
+        	    enqueueSnackbar("Material added", { variant: "success" });
         	    setLoading(true);
-	        axios.get("/api/getHomework?" + props.ClassID).then(({ data }) => {
+	        axios.get("/api/getMaterials?" + props.ClassID).then(({ data }) => {
       if (data.error) {
         return;
       }
@@ -184,19 +167,18 @@ export default function Homework(props) {
 		      	style={{width: '100%'}}
 		      	variant="outlined"
 			color="secondary">
-			Add Homework</Button>
+			Add Material</Button>
 	      }
 	 <div>
 	<div>
 	<br/>
-	{information && information.homeworks.map((entry, iter) =>
-	<HomeworkEntry
+	{information && information.materials.map((entry, iter) =>
+	<MaterialEntry
 	    showControl={information.show_control}
-	    id={entry.HomeworkID}
+	    id={entry.MaterialID}
 	    onDelete={handleDelete}
-	    deadline={entry.Deadline}
-	    heading={entry.HomeworkTitle}
-	    author={entry.Author}
+	    description={entry.MaterialDescription}
+	    heading={entry.MaterialTitle}
 	 />)
 	}
         </div>
@@ -204,15 +186,15 @@ export default function Homework(props) {
        
       </Container>
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-        <DialogTitle>New Homework</DialogTitle>
+        <DialogTitle>New Material</DialogTitle>
         <DialogContent>
           <TextField
             error={errorTitle}
             helperText={reasonTitle}
             autoFocus
             margin="dense"
-            id="homeworktitle"
-            label="Homework Title"
+            id="materialtitle"
+            label="Material Title"
             type="text"
             fullWidth
             value={title}
@@ -223,28 +205,19 @@ export default function Homework(props) {
 	    helperText={reasonDesc}
 	    multiline
             margin="dense"
-            id="homeworkdesc"
-            label="Homework Description"
+            id="materialdesc"
+            label="Material Description"
             type="text"
             fullWidth
             value={description}
             onChange={handleDescriptionChange}/>
-           <TextField
-            error={errorDate}
-	    helperText={reasonDate}
-            margin="dense"
-	    id="homeworkdeadline"
-            type="date"
-	    fullWidth
-            value={date}
-            onChange={handleDateChange}
-          /> 
-        </DialogContent>
+        
+	</DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleNewHomework} color="primary">
+          <Button onClick={handleNewMaterial} color="primary">
             Add
           </Button>
         </DialogActions>

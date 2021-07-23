@@ -45,7 +45,7 @@ export default (props) => {
 		  setExpandIcon(<ExpandLessIcon/>);
 
 		  // Get the content here.
-		  setContent(<Typography paragraph> This is the content for this thing</Typography>);
+		  setContent(<Typography paragraph>{props.description}</Typography>);
 		  
 		  setShow(true);
 	  }
@@ -56,7 +56,7 @@ export default (props) => {
 	<Container width="lg">
 	<Grid container direction="row" justify="flex-start" alignItems="center">
 	<Typography className={classes.heading}>
-		<b>{props.heading}</b> (Due {(new Date(props.deadline)).toDateString()})
+		<b>{props.heading}</b>
 	</Typography>
   	{props.showControl && 
 		<IconButton size="sm" onClick={handleBtn} color="secondary">
@@ -67,7 +67,8 @@ export default (props) => {
 		{expandIcon}
 	</IconButton>
       </Grid>
-      {show && content}
+      {show && content }
+      {show && <br/> }
       </Container>
    </Paper>
   );

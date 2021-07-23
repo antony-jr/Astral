@@ -6,6 +6,12 @@
   "repository": "https://github.com/antony-jr/Astral",
   "author": "antony-jr <antonyjr@protonmail.com>",
   "license": "MIT",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next build && next start",
+    "export": "next export"
+  },
   "dependencies": {
     "@material-ui/core": "^4.5.1",
     "@material-ui/icons": "^4.5.1",

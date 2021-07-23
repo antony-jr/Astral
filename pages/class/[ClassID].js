@@ -6,7 +6,7 @@ import App from '../../components/App.js';
 
 // Content for tabs
 import ClassHome from '../../components/ClassHome.js';
-import Homework from '../../components/Homework.js';
+import Materials from '../../components/Materials.js';
 
 import {
 	Typography,
@@ -98,10 +98,10 @@ function ClassSite(props) {
 			case 0:
 				setTabContent(<ClassHome ClassID={router.query.ClassID}/>);
 				break;
-			case 1:
-				setTabContent(<Homework ClassID={router.query.ClassID}/>);
-				break;
-			default:
+		        case 1:
+		      		setTabContent(<Materials ClassID={router.query.ClassID}/>);
+		      		break;
+		   	default:
 				setTabContent(null);
 				break;
 		}
@@ -130,9 +130,7 @@ function ClassSite(props) {
 			variant="scrollable"
           		scrollButtons="auto">
 			<Tab label="Class Home"/>
-			<Tab label="Homework"/>
 			<Tab label="Materials"/>
-			<Tab label="Lecture Notes"/>
 			</Tabs>
 		</Container>
 		{tabContent}

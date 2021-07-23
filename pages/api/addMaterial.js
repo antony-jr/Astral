@@ -1,8 +1,10 @@
 import { withSession } from "next-session";
 import siteConfig from "../../siteConfig.json";
+
 const mysql = require("mysql");
 
 var getConnection = require("../../lib/getConnection.js");
+var crypto = require("crypto");
 
 const handler = (req, res) => {
   res.setHeader("Content-Type", "application/json");
@@ -25,9 +27,12 @@ const handler = (req, res) => {
     return;
   }
 
-  const { ClassID, HomeworkID } = req.body;
+  const { ClassID, Title, Description } = req.body;
 
-  if (typeof ClassID == "string" && typeof HomeworkID == "string") {
+   if (typeof ClassID == "string" && 
+       typeof Title == "string" &&
+       typeof Description == "string" 
+   ) {
     getConnection((err, con) => {
       if (err) {
         res.statusCode = 200;
@@ -36,6 +41,12 @@ const handler = (req, res) => {
         );
         return;
       }
+
+      const timestamp = new Date().toString();
+      const MaterialID = crypto
+        .createHash("md5")
+        .update(ClassID + Title + timestamp)
+        .digest("hex");
 
       con.query(
         "SELECT * FROM ClassSites WHERE ClassID = ?",
@@ -71,8 +82,17 @@ const handler = (req, res) => {
             }
 
             con.query(
-              "DELETE FROM `Homeworks` WHERE HomeworkID = ? and ClassID = ?",
-	       [HomeworkID, ClassID],
+              "INSERT INTO `Materials`(ClassID, MaterialID, MaterialTitle, MaterialDescription, MaterialTimestamp) VALUES (" +
+                mysql.escape(ClassID) +
+                ", " +
+                mysql.escape(MaterialID) +
+                ", " +
+                mysql.escape(Title) +
+                ", " +
+	        mysql.escape(Description) + 
+	        ", " +
+                "current_timestamp()" +
+                ");",
               (e, r, f) => {
                 if (e) {
                   con.release();
@@ -85,7 +105,7 @@ const handler = (req, res) => {
 
                 con.release();
                 res.statusCode = 200;
-                res.end(JSON.stringify({ error: false, removal: "success" }));
+                res.end(JSON.stringify({ error: false, addition: "success" }));
                 return;
               }
             );

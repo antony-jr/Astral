@@ -39,31 +39,13 @@ CREATE TABLE IF NOT EXISTS Announcements (
         PRIMARY KEY (MsgID)
 );
 
-CREATE TABLE IF NOT EXISTS Homeworks (
+CREATE TABLE IF NOT EXISTS Materials (
 	ClassID varchar(32) NOT NULL,
-	HomeworkID varchar(32) NOT NULL, /* MD5 sum of ClassID + HomeworkTitle + HomeworkTimestamp + Deadline */
-	HomeworkTitle varchar(200),
-	HomeworkDescription varchar(500),
-	HomeworkTimestamp timestamp NOT NULL,
-	Deadline date NOT NULL,
-	Author varchar(100),
-	PRIMARY KEY (HomeworkID)
-);
-
-CREATE TABLE IF NOT EXISTS HomeworkFiles (
-	HomeworkID varchar(32) NOT NULL,
-	HomeworkFileID varchar(32) NOT NULL, /* MD5 sum of HomeworkID + FileID */
-	FileID varchar(32) NOT NULL,
-	PRIMARY KEY (HomeworkFileID) 
-);
-
--- We need a table to store details on all uploaded files
-CREATE TABLE IF NOT EXISTS Files (
-	FileID varchar(32) NOT NULL, /* MD5 sum of the file + timestamp */
-	FileName varchar(32),
-	FileTimestamp timestamp NOT NULL,
-	UserUploaded varchar(50),
-	PRIMARY KEY (FileID)
+	MaterialID varchar(32) NOT NULL, /* MD5 sum of ClassID + MaterialTitle + MaterialTimestamp */
+	MaterialTitle varchar(200),
+	MaterialDescription varchar(500),
+	MaterialTimestamp timestamp NOT NULL,
+	PRIMARY KEY (MaterialID)
 );
 
 -- We need a table to store the login credentials for all

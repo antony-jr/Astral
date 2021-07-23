@@ -1,10 +1,8 @@
 import { withSession } from "next-session";
 import siteConfig from "../../siteConfig.json";
-
 const mysql = require("mysql");
 
 var getConnection = require("../../lib/getConnection.js");
-var crypto = require("crypto");
 
 const handler = (req, res) => {
   res.setHeader("Content-Type", "application/json");
@@ -27,13 +25,9 @@ const handler = (req, res) => {
     return;
   }
 
-  const { ClassID, Title, Description, Deadline } = req.body;
+  const { ClassID, MaterialID } = req.body;
 
-   if (typeof ClassID == "string" && 
-       typeof Title == "string" &&
-       typeof Description == "string" &&
-       typeof Deadline == "string"
-    ) {
+  if (typeof ClassID == "string" && typeof MaterialID == "string") {
     getConnection((err, con) => {
       if (err) {
         res.statusCode = 200;
@@ -42,12 +36,6 @@ const handler = (req, res) => {
         );
         return;
       }
-
-      const timestamp = new Date().toString();
-      const HomeworkID = crypto
-        .createHash("md5")
-        .update(ClassID + Title + timestamp + Deadline)
-        .digest("hex");
 
       con.query(
         "SELECT * FROM ClassSites WHERE ClassID = ?",
@@ -83,20 +71,8 @@ const handler = (req, res) => {
             }
 
             con.query(
-              "INSERT INTO `Homeworks`(ClassID, HomeworkID, HomeworkTitle, HomeworkTimestamp, Author , HomeworkDescription, Deadline) VALUES (" +
-                mysql.escape(ClassID) +
-                ", " +
-                mysql.escape(HomeworkID) +
-                ", " +
-                mysql.escape(Title) +
-                ", " +
-                "current_timestamp(), " +
-		mysql.escape(req.session.legalName) +
-		", " + 
-		mysql.escape(Description) +
-	        ", " +
-		mysql.escape(Deadline) + 
-                ");",
+              "DELETE FROM `Materials` WHERE MaterialID = ? and ClassID = ?",
+	       [MaterialID, ClassID],
               (e, r, f) => {
                 if (e) {
                   con.release();
@@ -109,7 +85,7 @@ const handler = (req, res) => {
 
                 con.release();
                 res.statusCode = 200;
-                res.end(JSON.stringify({ error: false, addition: "success" }));
+                res.end(JSON.stringify({ error: false, removal: "success" }));
                 return;
               }
             );

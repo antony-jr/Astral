@@ -62,9 +62,9 @@ const handler = (req, res) => {
               return;
             }
             con.query(
-              "SELECT HomeworkID,HomeworkTitle,Deadline,Author FROM Homeworks WHERE ClassID = " +
-                mysql.escape(ClassID) +
-                " ORDER BY HomeworkTimestamp DESC;",
+	       "SELECT ClassID,MaterialID,MaterialTitle,MaterialDescription FROM Materials WHERE ClassID = " +
+	       mysql.escape(ClassID) +
+                " ORDER BY MaterialTimestamp DESC;",
               (E, R, F) => {
                 if (E) {
                   con.release();
@@ -83,7 +83,7 @@ const handler = (req, res) => {
                   showControl = true;
                 }
                 const reqData = {
-                  homeworks: R,
+                  materials: R,
                   show_control: showControl
                 };
 
