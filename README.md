@@ -1,4 +1,4 @@
-# Astral [WIP]
+# Astral
 
 A Course Mangement System inspired by Harvard Extensions and MIT Stellar.
 
